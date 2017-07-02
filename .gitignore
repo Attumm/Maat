@@ -1,0 +1,5 @@
+*.pyc
+.coverage
+.hypothesis
+.idea
+.DS_Store

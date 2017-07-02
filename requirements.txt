@@ -1,0 +1,9 @@
+appdirs==1.4.3
+coverage==4.3.4
+deepdiff==3.2.0
+enum34==1.1.6
+hypothesis==3.8.2
+jsonpickle==0.9.4
+packaging==16.8
+pyparsing==2.2.0
+six==1.10.0
