@@ -11,6 +11,8 @@ from validation import uuid_validation
 from validation import maat_scale, Invalid
 from validation import int_validation, str_validation, float_validation, list_validation, dict_validation
 
+from extras import validate_args
+
 
 class TestValidation(unittest.TestCase):
 
@@ -716,6 +718,76 @@ class ValidatorWrongInputTests(unittest.TestCase):
         }
         with self.assertRaisesRegexp(Invalid, "street is in blacklist of blacklisted"):
             _ = maat_scale(test_input, test_validation)
+
+class TestValidationDecorator(unittest.TestCase):
+
+    def setUp(self):
+        self.test_input = {
+            'number': 23,
+            'name': 'John Doe',
+            'kind': 'banana',
+        }
+        self.test_validation = {
+            'number': {'validator': 'int', 'args': {'min_amount': 1}},
+            'name': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 35, 'regex': r'(\w+ )(\w+)'}},
+            'kind': {'validator': 'str', 'args': {'choices': ['apple', 'banana', 'citrus']}}
+        }
+
+    def test_validation_of_arguments(self):
+        """Happy path test"""
+        @validate_args(self.test_validation)
+        def foo(number, name, kind):
+            return locals()
+
+        result = foo(**self.test_input)
+        difference = ddiff(result, self.test_input)
+
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+    def test_validation_of_argument_fail(self):
+        """Test with validation failures"""
+
+        @validate_args(self.test_validation)
+        def foo(number, name, kind):
+            return locals()
+
+        # change type of number from int to str
+        with self.assertRaisesRegexp(Invalid, 'number contains invalid item 2: not of type integer'):
+            result = foo(number='2', name='foo bar', kind='apple')
+
+        # let's remove an argument
+        with self.assertRaisesRegexp(Invalid, 'kind: invalid key'):
+            result = foo(number=2, name='foo bar')
+
+    def test_validation_of_argument_fail_returns_none(self):
+        """Test with validation failures handle them and return None"""
+
+        @validate_args(self.test_validation, fail_is_none=True)
+        def foo(number, name, kind):
+            return locals()
+
+        # change type of number from int to str
+        result = foo(number='2', name='foo bar', kind='apple')
+        self.assertEqual(result, None)
+        # let's remove an argument
+        result = foo(number=2, name='foo bar')
+        self.assertEqual(result, None)
+
+    def test_validation_of_argument_fail_with_custom_exception(self):
+        """Test with validation failures raises an custom exception"""
+
+        @validate_args(self.test_validation, custom_exception=KeyError)
+        def foo(number, name, kind):
+            return locals()
+
+        # change type of number from int to str
+        with self.assertRaisesRegexp(KeyError, ''):
+            result = foo(number='2', name='foo bar', kind='apple')
+
+        # let's remove an argument
+        with self.assertRaisesRegexp(KeyError, ''):
+            result = foo(number=2, name='foo bar')
 
 
 if __name__ == '__main__':
