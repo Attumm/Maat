@@ -83,12 +83,12 @@ class TestValidation(unittest.TestCase):
         """Set id to invalid value, expect Exception"""
         self.test_input['id'] = -1
 
-        with self.assertRaisesRegexp(Invalid, 'id contains invalid item -1: integer is less then 1'):
+        with self.assertRaisesRegexp(Invalid, 'key: "id" contains invalid item "-1": integer is less then 1'):
             _ = maat_scale(self.test_input, self.test_validation)
 
     def test_validate_invalid_int_value_name(self):
         self.test_input['name'] = 30
-        with self.assertRaisesRegexp(Invalid, 'name contains invalid item 30: not of type string'):
+        with self.assertRaisesRegexp(Invalid, 'key: "name" contains invalid item "30" with type "int": not of type string'):
             _ = maat_scale(self.test_input, self.test_validation)
 
         # test validator of name to make the previous invalid value valid.
@@ -97,13 +97,13 @@ class TestValidation(unittest.TestCase):
         difference = ddiff(validated_items, self.test_input)
         self.assertEqual(difference, {})
 
-    def test_validate_(self):
-        self.test_input['name'] = 30
-        with self.assertRaisesRegexp(Invalid, 'name contains invalid item 30: not of type string'):
+    def test_validate_float_value_name(self):
+        self.test_input['name'] = 30.0
+        with self.assertRaisesRegexp(Invalid, 'key: "name" contains invalid item "30.0" with type "float": not of type string'):
             _ = maat_scale(self.test_input, self.test_validation)
 
         # test validator of name to make the previous invalid value valid.
-        self.test_validation['name'] = {'validator': 'int'}
+        self.test_validation['name'] = {'validator': 'float'}
         validated_items = maat_scale(self.test_input, self.test_validation)
         difference = ddiff(validated_items, self.test_input)
         self.assertEqual(difference, {})
@@ -349,7 +349,7 @@ class TestValidation(unittest.TestCase):
                 }
             }
         }
-        exp_exc_msg = "222 contains invalid item deep: not in valid choices \['not_part_of_choices', 'fail_here'\]"
+        exp_exc_msg = "key: \"222\" contains invalid item \"deep\": not in valid choices \['not_part_of_choices', 'fail_here'\]"
         with self.assertRaisesRegexp(Invalid, exp_exc_msg):
             _ = maat_scale(nested_dict, nested_dict_validation)
 
@@ -615,7 +615,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
         """a helpfull message is shown when trying to use post transformation that is not registered"""
         test_input = {'id': None}
         test_validation = {'id': {'validator': 'float'}}
-        with self.assertRaisesRegexp(Invalid, 'id contains invalid item None: not of type float'):
+        with self.assertRaisesRegexp(Invalid, 'key: \"id\" contains invalid item \"None\" with type \"NoneType\": not of type float'):
             _ = maat_scale(test_input, test_validation)
 
         test_validation = {'id': {'validator': 'float', 'null_able': True}}
@@ -753,7 +753,7 @@ class TestValidationDecorator(unittest.TestCase):
             return locals()
 
         # change type of number from int to str
-        with self.assertRaisesRegexp(Invalid, 'number contains invalid item 2: not of type integer'):
+        with self.assertRaisesRegexp(Invalid, 'key: "number" contains invalid item "2" with type "str": not of type int'):
             result = foo(number='2', name='foo bar', kind='apple')
 
         # let's remove an argument
