@@ -41,7 +41,7 @@ class TestValidation(unittest.TestCase):
 
         del self.test_input['type']
 
-        with self.assertRaisesRegexp(Invalid, 'type: missing key'):
+        with self.assertRaisesRegexp(Invalid, 'key:"type" is not set'):
             _ = maat_scale(self.test_input, self.test_validation)
 
     def test_validation_test_remove_key_and_set_optional(self):
@@ -757,7 +757,7 @@ class TestValidationDecorator(unittest.TestCase):
             result = foo(number='2', name='foo bar', kind='apple')
 
         # let's remove an argument
-        with self.assertRaisesRegexp(Invalid, 'kind: missing key'):
+        with self.assertRaisesRegexp(Invalid, 'key:"kind" is not set'):
             result = foo(number=2, name='foo bar')
 
     def test_validation_of_argument_fail_returns_none(self):

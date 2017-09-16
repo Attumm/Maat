@@ -159,7 +159,7 @@ def maat_scale(input_dict, counter_dict):
             elif item.get('optional'):
                 continue
             else:
-                raise Invalid('{0}: missing key'.format(key))
+                raise Invalid('key:"{0}" is not set'.format(key))
         except TypeError:
             raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict)))
 
