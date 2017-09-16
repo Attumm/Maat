@@ -563,12 +563,11 @@ class ValidatorWrongInputTests(unittest.TestCase):
         }
 
     def test_missing_key_validation(self):
-        """Items that are not expected are removed"""
+        """Items that will raise an exception"""
         del self.test_validation['name']
 
-        validated_items = maat_scale(self.test_input, self.test_validation)
-        difference = ddiff(self.test_input, validated_items)
-        self.assertEqual({'dictionary_item_removed': set(["root['name']"])}, difference)
+        with self.assertRaisesRegexp(Invalid, 'name: invalid key'):
+            _ = maat_scale(self.test_input, self.test_validation)
 
     def test_not_set_validator(self):
         """Approriate message shown when trying to use a validator that is not registered"""

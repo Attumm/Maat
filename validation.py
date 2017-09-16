@@ -145,7 +145,21 @@ def get_transformation_func(item, type_transformation):
         raise Invalid('{} is not registered as transformation'.format(transformation))
 
 
+def keys_equality(input_dict, counter_dict):
+    return all(k in counter_dict for k in input_dict)
+
+
+def find_missing_keys(input_dict, counter_dict):
+    try:
+         return ', '.join([key for key in input_dict.iterkeys() if key not in counter_dict])
+    except (TypeError, AttributeError):
+        raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict)))
+
+
 def maat_scale(input_dict, counter_dict):
+
+    if not keys_equality(input_dict, counter_dict):
+        raise Invalid('{0}: invalid key'.format(find_missing_keys(input_dict, counter_dict)))
 
     validated_items = {}
     for key, item in counter_dict.iteritems():
