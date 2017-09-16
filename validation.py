@@ -174,10 +174,10 @@ def maat_scale(input_dict, counter_dict):
         post_transformation = get_transformation_func(item, 'transform')
 
         # the validation can be done on top level, life is good
-        if item.get('nested') is None:
+        if 'nested' not in item:
             validated_items[key] = post_transformation(validation_func(key=key, val=pre_transformation(val), **validation_args))
 
-        elif item.get('list'):
+        elif 'list' in item:
             validated_items[key] = []
             for nested_item in val:
                 # within a list a item should be skipable
@@ -188,7 +188,7 @@ def maat_scale(input_dict, counter_dict):
                         raise e
 
         # the item is nested with a list of dictionary items
-        elif  item.get('list_dicts'):
+        elif 'list_dicts' in item:
 
             validation_func(key=key, val=val, **validation_args)
             for nested_item in val:
