@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import re
+import sys
 import json
 import math
 
@@ -8,11 +9,23 @@ from uuid import UUID
 from datetime import datetime
 
 
+config = {
+    'depth_limit': (sys.getrecursionlimit() - 50)
+    }
+
+special_arguments = ['nested', 'list', 'aso_array', 'skip_failed', 'null_able', 'optional', 'default_value', 'validator', 'pre_transform', 'transform', 'list_dicts']
+
 class Invalid(Exception):
     pass
 
 
-def str_validation(val, key=None, min_length=None, max_length=None, regex=None, choices=None):
+def str_validation(val, key=None, min_length=None, max_length=None, regex=None, choices=None, cast=None):
+    if cast:
+        try:
+            val = str(val)
+        except (ValueError, TypeError):
+            raise Invalid('key: "{0}" contains invalid item "{1}": unable to convert from type "{2}" to str'.format(key, type(val).__name__, val))
+
     if not isinstance(val, basestring):
         raise Invalid('key: "{0}" contains invalid item "{1}" with type "{2}": not of type string'.format(key, val, type(val).__name__))
 
@@ -60,10 +73,10 @@ def float_validation(val, key=None, min_amount=None, max_amount=None, cast=None)
     if not isinstance(val, float) or math.isnan(val):
         raise Invalid('key: "{0}" contains invalid item "{1}" with type "{2}": not of type float'.format(key, val, type(val).__name__))
 
-    if min_amount is not None and val < float(min_amount):
+    if min_amount is not None and val < min_amount:
         raise Invalid('key: "{0}" contains invalid item "{1}": float is less then {2}'.format(key, val, min_amount))
 
-    if max_amount is not None and val > float(max_amount):
+    if max_amount is not None and val > max_amount:
         raise Invalid('key: "{0}" contains invalid item "{1}": float is less then {2}'.format(key, val, max_amount))
 
     return val
@@ -92,8 +105,8 @@ def dict_validation(val, key=None, min_amount=None, max_amount=None, key_min=Non
     if max_amount is not None and len(val) > max_amount:
         raise Invalid('key: "{0}" contains invalid item "{1}": contains more then maximum amount of {2}'.format(key, val, max_amount))
 
-    if key_regex is not None and not all(bool(re.match(key_regex, i)) for i in val.keys()):
-        raise Invalid('{0}: has dictionary key that does not adhere to regex {1}'.format(key, key_regex))
+    if key_regex is not None and not all(bool(re.match(key_regex, str(i))) for i in val.keys()):
+            raise Invalid('{0}: has dictionary key that does not adhere to regex {1}'.format(key, key_regex))
 
     return val
 
@@ -133,6 +146,10 @@ def get_validation_func(item):
         raise Invalid('{} is not registered as validator'.format(item.get('validator')))
 
 
+def get_validation_args(item):
+    return {k: v for k, v, in item.iteritems() if k not in special_arguments}
+
+
 def get_transformation_func(item, type_transformation):
     """Check if transformation is set. If set try to find it in registerd transformation.
     If transformation is misspelled or sit or throw an exception"""
@@ -146,18 +163,24 @@ def get_transformation_func(item, type_transformation):
 
 
 def keys_equality(input_dict, counter_dict):
-    return all(k in counter_dict for k in input_dict)
+    try:
+        return all(k in counter_dict for k in input_dict.iterkeys())
+    except (TypeError, AttributeError):
+        return False
 
 
 def find_missing_keys(input_dict, counter_dict):
     try:
-         return ', '.join([key for key in input_dict.iterkeys() if key not in counter_dict])
+        return ', '.join([key for key in input_dict.iterkeys() if key not in counter_dict])
     except (TypeError, AttributeError):
-        raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict)))
+        raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict).__name__))
 
 
-def maat_scale(input_dict, counter_dict):
-
+def maat_scale(input_dict, counter_dict, counter=0):
+    counter += 1
+    if counter > config['depth_limit']:
+        raise Invalid('{0}: invalid depth of dict'.format(counter))
+        
     if not keys_equality(input_dict, counter_dict):
         raise Invalid('{0}: invalid key'.format(find_missing_keys(input_dict, counter_dict)))
 
@@ -174,8 +197,11 @@ def maat_scale(input_dict, counter_dict):
                 continue
             else:
                 raise Invalid('key:"{0}" is not set'.format(key))
-        except TypeError:
-            raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict)))
+
+        #TODO old syntax support, tests should move over.
+        if 'args' in item:
+            item.update(item['args'])
+            del item['args']
 
         # # if the value is None, check for default value or check if it was required
         if val is None and item.get('null_able'):
@@ -183,7 +209,7 @@ def maat_scale(input_dict, counter_dict):
             continue
 
         validation_func = get_validation_func(item)
-        validation_args = item.get('args', {})
+        validation_args = get_validation_args(item)
         pre_transformation = get_transformation_func(item, 'pre_transform')
         post_transformation = get_transformation_func(item, 'transform')
 
@@ -210,16 +236,16 @@ def maat_scale(input_dict, counter_dict):
                     validated_items[key] = []
 
                 try:
-                    validated_items[key].append(post_transformation(maat_scale(pre_transformation(nested_item), counter_dict[key]['nested'])))
+                    validated_items[key].append(post_transformation(maat_scale(pre_transformation(nested_item), counter_dict[key]['nested'], counter=counter)))
                 except Invalid:
                     if not item.get('skip_failed'):
                         raise
 
         # the item is nested. we have to start over to do the same the one level deeper
         elif not item.get('aso_array', False):
-            validated_items[key] = post_transformation(maat_scale(pre_transformation(input_dict[key]), counter_dict[key]['nested']))
+            validated_items[key] = post_transformation(maat_scale(pre_transformation(input_dict[key]), counter_dict[key]['nested'], counter=counter))
 
-        # the item is a "associative array" dictionary.
+        # the item is a "associative array" dictionary e.g keys are numerical indexes
         else:
             validation_func(key=key, val=val, **validation_args)
 
@@ -231,6 +257,6 @@ def maat_scale(input_dict, counter_dict):
                 if nested_key not in validated_items[key]:
                     validated_items[key][nested_key] = {}
 
-                validated_items[key][nested_key] = maat_scale(nested_val, counter_dict[key]['nested'])
+                validated_items[key][nested_key] = maat_scale(nested_val, counter_dict[key]['nested'], counter=counter)
 
     return validated_items

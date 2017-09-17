@@ -4,6 +4,13 @@ deepdiff==3.2.0
 enum34==1.1.6
 hypothesis==3.8.2
 jsonpickle==0.9.4
+linecache2==1.0.0
 packaging==16.8
+pluggy==0.5.2
+py==1.4.34
 pyparsing==2.2.0
 six==1.10.0
+tox==2.8.2
+traceback2==1.4.0
+unittest2==1.1.0
+virtualenv==15.1.0

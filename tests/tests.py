@@ -1,3 +1,4 @@
+import os
 import sys
 import uuid
 import unittest
@@ -7,11 +8,13 @@ import hypothesis.strategies as st
 
 from deepdiff import DeepDiff as ddiff
 
-from validation import uuid_validation
-from validation import maat_scale, Invalid
-from validation import int_validation, str_validation, float_validation, list_validation, dict_validation
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
-from extras import validate_args
+from maat import uuid_validation
+from maat import maat_scale, Invalid
+from maat import int_validation, str_validation, float_validation, list_validation, dict_validation
+
+from maat import validate_args
 
 
 class TestValidation(unittest.TestCase):
@@ -107,6 +110,29 @@ class TestValidation(unittest.TestCase):
         validated_items = maat_scale(self.test_input, self.test_validation)
         difference = ddiff(validated_items, self.test_input)
         self.assertEqual(difference, {})
+
+    def test_validate_programming_error_trying_to_validate_non_dict(self):
+        
+        test_input = [1, 2, 4]
+        with self.assertRaisesRegexp(Invalid, "\[1, 2, 4\] not a dictionary but is of type list"):
+            _ = maat_scale(test_input, self.test_validation)
+
+        test_input = set([1, 2, 3])
+        with self.assertRaisesRegexp(Invalid, "set\(\[1, 2, 3\]\) not a dictionary but is of type set"):
+            _ = maat_scale(test_input, self.test_validation)
+
+        test_input = 1
+        with self.assertRaisesRegexp(Invalid, "1 not a dictionary but is of type int"):
+            _ = maat_scale(test_input, self.test_validation)
+
+        test_input = None
+        with self.assertRaisesRegexp(Invalid, "None not a dictionary but is of type None"):
+            _ = maat_scale(test_input, self.test_validation)
+        # test validator of name to make the previous invalid value valid.
+        #self.test_validation['name'] = {'validator': 'float'}
+        #validated_items = maat_scale(self.test_input, self.test_validation)
+        #difference = ddiff(validated_items, self.test_input)
+        #self.assertEqual(difference, {})
 
     def test_validate_nested_dict(self):
         self.test_input = {
@@ -353,6 +379,76 @@ class TestValidation(unittest.TestCase):
         with self.assertRaisesRegexp(Invalid, exp_exc_msg):
             _ = maat_scale(nested_dict, nested_dict_validation)
 
+    def test_validate_item_200_deep(self):
+        """Lower depth for deepdiff limits, then later tests"""
+        input_dict = current = {}
+        counter_dict = counter_current = {}
+
+        times = 200
+        for _ in range(times):
+            current['nested_dic'] = {}
+            current = current['nested_dic']
+
+        # set last item
+        current['last'] = 4
+
+        counter_current['nested_dic'] = {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}
+        for _ in range(times - 1):
+            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}}
+            counter_current = counter_current['nested_dic']['nested']
+
+        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'args': {'min_amount': 1, 'max_amount': 10}}}
+
+        validated_items = maat_scale(input_dict, counter_dict)
+        difference = ddiff(validated_items, input_dict)
+        self.assertEqual(difference, {})
+
+    def test_validate_item_800_deep_invalid_item(self):
+        input_dict = current = {}
+        counter_dict = counter_current = {}
+
+        times = 800
+        for _ in range(times):
+            current['nested_dic'] = {}
+            current = current['nested_dic']
+
+        # set last item
+        current['last'] = 4
+
+        counter_current['nested_dic'] = {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}
+        for _ in range(times - 1):
+            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}}
+            counter_current = counter_current['nested_dic']['nested']
+
+        # increase minimal amount to 5
+        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'args': {'min_amount': 5, 'max_amount': 10}}}
+
+        with self.assertRaisesRegexp(Invalid, 'key: "last" contains invalid item "4": integer is less then 5'):
+            _ = maat_scale(input_dict, counter_dict)
+
+    def test_validate_invalid_depth(self):
+        input_dict = current = {}
+        counter_dict = counter_current = {}
+
+        times = sys.getrecursionlimit()
+        for _ in range(times):
+            current['nested_dic'] = {}
+            current = current['nested_dic']
+
+        # set last item
+        current['last'] = 4
+
+        counter_current['nested_dic'] = {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}
+        for _ in range(times - 1):
+            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}}
+            counter_current = counter_current['nested_dic']['nested']
+
+        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'args': {'min_amount': 1, 'max_amount': 10}}}
+
+        error_msg = sys.getrecursionlimit() - 49
+        with self.assertRaisesRegexp(Invalid, '{}: invalid depth of dict'.format(error_msg)):
+            _ = maat_scale(input_dict, counter_dict)
+
 
 class TestValidatorPropertyBased(unittest.TestCase):
 
@@ -379,16 +475,12 @@ class TestValidatorPropertyBased(unittest.TestCase):
         self.assertEqual(expected, result)
 
     #TODO Python long ints to float conversion goes wrong, thus all tests too.
-    @given(val=st.floats(), min_amount=st.integers(min_value=(-sys.maxint), max_value=sys.maxint),
-           max_amount=st.integers(min_value=(-sys.maxint), max_value=sys.maxint).filter(lambda x: x != 0))
+    @given(val=st.floats(), min_amount=st.integers(min_value=(-sys.maxint), max_value=sys.maxint).filter(lambda x: x != 0),
+            max_amount=st.integers(min_value=(-sys.maxint), max_value=sys.maxint).filter(lambda x: x != 0))
     def test_float_validation_min_max(self, val, min_amount, max_amount):
-        expected = val < max_amount and val >= min_amount
+        expected = (val <= max_amount and val >= min_amount) or (val == max_amount and min_amount == max_amount)
         result = self.result_as_bool(float_validation, val=val, min_amount=min_amount, max_amount=max_amount)
-
         self.assertEqual(expected, result)
-
-    # def list_validation_size_test(self):
-    #     pass
 
 
 class ValidatorTests(unittest.TestCase):
@@ -604,10 +696,10 @@ class ValidatorWrongInputTests(unittest.TestCase):
         test_input_list = ['id', float(23)]
         test_input_tuple = ('id', float(23))
         test_validation = {'id': {'validator': 'int', 'transform': 'int'}}
-        with self.assertRaisesRegexp(Invalid, "\['id', 23.0\] not a dictionary but is of type <type 'list'>"):
+        with self.assertRaisesRegexp(Invalid, "\['id', 23.0\] not a dictionary but is of type list"):
             _ = maat_scale(test_input_list, test_validation)
 
-        with self.assertRaisesRegexp(Invalid, "\('id', 23.0\) not a dictionary but is of type <type 'tuple'>"):
+        with self.assertRaisesRegexp(Invalid, "\('id', 23.0\) not a dictionary but is of type tuple"):
             _ = maat_scale(test_input_tuple, test_validation)
 
     def test_item_nullable(self):
@@ -623,7 +715,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
         self.assertEqual(difference, {})
 
     def test_validate_skip_instead_of_fail_within_nested_list_with_custom_validation(self):
-        from validation import registered_functions
+        from maat import registered_functions
         def blacklist_address(key, val):
             """Since this is a example blacklisted is hardcoded.
             It could come from config or an key value store at runtime
@@ -663,7 +755,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
         self.assertEqual(difference, {})
 
     def test_validate_fail_within_nested_list_with_custom_validation(self):
-        from validation import registered_functions
+        from maat import registered_functions
         def blacklist_address(key, val):
             """Since this is a example blacklisted is hardcoded.
             It could come from config or an key value store at runtime
@@ -690,7 +782,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
             _ = maat_scale(test_input, test_validation)
 
     def test_validate_fail_within_nested_list_dicts_with_custom_validation(self):
-        from validation import registered_functions
+        from maat import registered_functions
         def blacklist_address(key, val):
             """Since this is a example blacklisted is hardcoded.
             It could come from config or an key value store at runtime
@@ -744,6 +836,31 @@ class TestValidationDecorator(unittest.TestCase):
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
+    def test_validation_of_arguments_diffirent_input(self):
+
+        @validate_args(self.test_validation)
+        def foo(number, name, kind):
+            return locals()
+
+        number = self.test_input['number']
+        name = self.test_input['name']
+        kind = self.test_input['kind']
+
+        # all arguments are part of kwargs
+        result = foo(number=number, name=name, kind=kind)
+        difference = ddiff(result, self.test_input)
+        self.assertEqual(difference, {})
+
+        # all arguments all part of args
+        result = foo(number, name, kind)
+        difference = ddiff(result, self.test_input)
+        self.assertEqual(difference, {})
+
+        # mixed arg, kwargs arguments
+        result = foo(number, name, kind=kind)
+        difference = ddiff(result, self.test_input)
+        self.assertEqual(difference, {})
+
     def test_validation_of_argument_fail(self):
         """Test with validation failures"""
 
@@ -759,6 +876,12 @@ class TestValidationDecorator(unittest.TestCase):
         with self.assertRaisesRegexp(Invalid, 'key:"kind" is not set'):
             result = foo(number=2, name='foo bar')
 
+        # tests that functions still works
+        result = foo(**self.test_input)
+        difference = ddiff(result, self.test_input)
+
+        self.assertEqual(difference, {})
+
     def test_validation_of_argument_fail_returns_none(self):
         """Test with validation failures handle them and return None"""
 
@@ -772,6 +895,12 @@ class TestValidationDecorator(unittest.TestCase):
         # let's remove an argument
         result = foo(number=2, name='foo bar')
         self.assertEqual(result, None)
+
+        # tests that functions still works
+        result = foo(**self.test_input)
+        difference = ddiff(result, self.test_input)
+
+        self.assertEqual(difference, {})
 
     def test_validation_of_argument_fail_with_custom_exception(self):
         """Test with validation failures raises an custom exception"""
@@ -787,6 +916,12 @@ class TestValidationDecorator(unittest.TestCase):
         # let's remove an argument
         with self.assertRaisesRegexp(KeyError, ''):
             result = foo(number=2, name='foo bar')
+
+        # tests that functions still works
+        result = foo(**self.test_input)
+        difference = ddiff(result, self.test_input)
+
+        self.assertEqual(difference, {})
 
 
 if __name__ == '__main__':
