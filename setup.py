@@ -10,7 +10,7 @@ setup(
     name='Maat 2',
     author='Melvin Bijman',
     author_email='bijman.m.m@gmail.com',
-    version='0.1',
+    version='0.8',
     install_requires=[
         'appdirs',
         'coverage',
