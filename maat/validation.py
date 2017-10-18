@@ -13,7 +13,7 @@ config = {
     'depth_limit': (sys.getrecursionlimit() - 50)
     }
 
-special_arguments = ['nested', 'list', 'aso_array', 'skip_failed', 'null_able', 'optional', 'default_value', 'validator', 'pre_transform', 'transform', 'list_dicts']
+special_arguments = ['nested', 'list', 'aso_array', 'skip_failed', 'null_able', 'optional', 'default_value', 'validator', 'pre_transform', 'transform', 'list_dicts', 'empty_list']
 
 class Invalid(Exception):
     pass
@@ -218,7 +218,8 @@ def maat_scale(input_dict, counter_dict, counter=0):
             validated_items[key] = post_transformation(validation_func(key=key, val=pre_transformation(val), **validation_args))
 
         elif 'list' in item:
-            validated_items[key] = []
+            validated_items[key] = item.get('empty_list', []) if len(val) == 0 else []
+
             for nested_item in val:
                 # within a list a item should be skipable
                 try:
