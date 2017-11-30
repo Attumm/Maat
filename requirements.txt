@@ -14,3 +14,7 @@ tox==2.8.2
 traceback2==1.4.0
 unittest2==1.1.0
 virtualenv==15.1.0
+certifi==2017.11.5
+PyYAML==3.12
+pycrypto==2.6.1
+pyparsing==2.2.0
