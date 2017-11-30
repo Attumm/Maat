@@ -103,7 +103,7 @@ class TestEncryptDecrypt(unittest.TestCase):
                 'pre_transform': 'decode', 'transform': 'encode'
                 },
             'address': {
-                'validator': 'str', 'regex': 'Doe Street',
+                'validator': 'str', 'regex': 'John Doe Street',
                 'pre_transform': 'decode', 'transform': 'encode'
                 },
         }
