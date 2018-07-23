@@ -1,0 +1,6 @@
+jsonpickle==0.9.5
+attrs==18.1.0
+coverage==4.5.1
+deepdiff==3.3.0
+hypothesis==3.66.6
+pycrypto==2.6.1

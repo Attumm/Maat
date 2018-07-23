@@ -44,7 +44,7 @@ class TestValidation(unittest.TestCase):
 
         del self.test_input['type']
 
-        with self.assertRaisesRegexp(Invalid, 'key:"type" is not set'):
+        with self.assertRaisesRegex(Invalid, 'key:"type" is not set'):
             _ = maat_scale(self.test_input, self.test_validation)
 
     def test_validation_test_remove_key_and_set_optional(self):
@@ -86,12 +86,12 @@ class TestValidation(unittest.TestCase):
         """Set id to invalid value, expect Exception"""
         self.test_input['id'] = -1
 
-        with self.assertRaisesRegexp(Invalid, 'key: "id" contains invalid item "-1": integer is less then 1'):
+        with self.assertRaisesRegex(Invalid, 'key: "id" contains invalid item "-1": integer is less then 1'):
             _ = maat_scale(self.test_input, self.test_validation)
 
     def test_validate_invalid_int_value_name(self):
         self.test_input['name'] = 30
-        with self.assertRaisesRegexp(Invalid, 'key: "name" contains invalid item "30" with type "int": not of type string'):
+        with self.assertRaisesRegex(Invalid, 'key: "name" contains invalid item "30" with type "int": not of type string'):
             _ = maat_scale(self.test_input, self.test_validation)
 
         # test validator of name to make the previous invalid value valid.
@@ -102,7 +102,7 @@ class TestValidation(unittest.TestCase):
 
     def test_validate_float_value_name(self):
         self.test_input['name'] = 30.0
-        with self.assertRaisesRegexp(Invalid, 'key: "name" contains invalid item "30.0" with type "float": not of type string'):
+        with self.assertRaisesRegex(Invalid, 'key: "name" contains invalid item "30.0" with type "float": not of type string'):
             _ = maat_scale(self.test_input, self.test_validation)
 
         # test validator of name to make the previous invalid value valid.
@@ -114,19 +114,19 @@ class TestValidation(unittest.TestCase):
     def test_validate_programming_error_trying_to_validate_non_dict(self):
         
         test_input = [1, 2, 4]
-        with self.assertRaisesRegexp(Invalid, "\[1, 2, 4\] not a dictionary but is of type list"):
+        with self.assertRaisesRegex(Invalid, "\[1, 2, 4\] not a dictionary but is of type list"):
             _ = maat_scale(test_input, self.test_validation)
 
         test_input = set([1, 2, 3])
-        with self.assertRaisesRegexp(Invalid, "set\(\[1, 2, 3\]\) not a dictionary but is of type set"):
+        with self.assertRaisesRegex(Invalid, "\{1, 2, 3\} not a dictionary but is of type set"):
             _ = maat_scale(test_input, self.test_validation)
 
         test_input = 1
-        with self.assertRaisesRegexp(Invalid, "1 not a dictionary but is of type int"):
+        with self.assertRaisesRegex(Invalid, "1 not a dictionary but is of type int"):
             _ = maat_scale(test_input, self.test_validation)
 
         test_input = None
-        with self.assertRaisesRegexp(Invalid, "None not a dictionary but is of type None"):
+        with self.assertRaisesRegex(Invalid, "None not a dictionary but is of type None"):
             _ = maat_scale(test_input, self.test_validation)
         # test validator of name to make the previous invalid value valid.
         #self.test_validation['name'] = {'validator': 'float'}
@@ -376,7 +376,7 @@ class TestValidation(unittest.TestCase):
             }
         }
         exp_exc_msg = "key: \"222\" contains invalid item \"deep\": not in valid choices \['not_part_of_choices', 'fail_here'\]"
-        with self.assertRaisesRegexp(Invalid, exp_exc_msg):
+        with self.assertRaisesRegex(Invalid, exp_exc_msg):
             _ = maat_scale(nested_dict, nested_dict_validation)
 
     def test_validate_item_200_deep(self):
@@ -423,7 +423,7 @@ class TestValidation(unittest.TestCase):
         # increase minimal amount to 5
         counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'args': {'min_amount': 5, 'max_amount': 10}}}
 
-        with self.assertRaisesRegexp(Invalid, 'key: "last" contains invalid item "4": integer is less then 5'):
+        with self.assertRaisesRegex(Invalid, 'key: "last" contains invalid item "4": integer is less then 5'):
             _ = maat_scale(input_dict, counter_dict)
 
     def test_validate_invalid_depth(self):
@@ -446,7 +446,7 @@ class TestValidation(unittest.TestCase):
         counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'args': {'min_amount': 1, 'max_amount': 10}}}
 
         error_msg = sys.getrecursionlimit() - 49
-        with self.assertRaisesRegexp(Invalid, '{}: invalid depth of dict'.format(error_msg)):
+        with self.assertRaisesRegex(Invalid, '{}: invalid depth of dict'.format(error_msg)):
             _ = maat_scale(input_dict, counter_dict)
 
 
@@ -466,8 +466,8 @@ class TestValidatorPropertyBased(unittest.TestCase):
         result = self.result_as_bool(str_validation, val=val, min_length=min_length, max_length=max_length)
         self.assertEqual(expected, result)
 
-    @given(val=st.integers(), min_amount=st.integers(min_value=(-sys.maxint), max_value=sys.maxint),
-           max_amount=st.integers(min_value=(-sys.maxint), max_value=sys.maxint))
+    @given(val=st.integers(), min_amount=st.integers(),
+           max_amount=st.integers())
     def test_int_validation_min_max(self, val, min_amount, max_amount):
         expected = val <= max_amount and val >= min_amount
         result = self.result_as_bool(int_validation, val=val, min_amount=min_amount, max_amount=max_amount)
@@ -475,8 +475,7 @@ class TestValidatorPropertyBased(unittest.TestCase):
         self.assertEqual(expected, result)
 
     #TODO Python long ints to float conversion goes wrong, thus all tests too.
-    @given(val=st.floats(), min_amount=st.integers(min_value=(-sys.maxint), max_value=sys.maxint).filter(lambda x: x != 0),
-            max_amount=st.integers(min_value=(-sys.maxint), max_value=sys.maxint).filter(lambda x: x != 0))
+    @given(val=st.floats(), min_amount=st.integers(), max_amount=st.integers())
     def test_float_validation_min_max(self, val, min_amount, max_amount):
         expected = (val <= max_amount and val >= min_amount) or (val == max_amount and min_amount == max_amount)
         result = self.result_as_bool(float_validation, val=val, min_amount=min_amount, max_amount=max_amount)
@@ -658,7 +657,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
         """Items that will raise an exception"""
         del self.test_validation['name']
 
-        with self.assertRaisesRegexp(Invalid, 'name: invalid key'):
+        with self.assertRaisesRegex(Invalid, 'name: invalid key'):
             _ = maat_scale(self.test_input, self.test_validation)
 
     def test_not_set_validator(self):
@@ -666,7 +665,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
         test_input = {'id': 23}
         test_validation = {'id': {'validator': 'integer'}}
 
-        with self.assertRaisesRegexp(Invalid, 'integer is not registered as validator'):
+        with self.assertRaisesRegex(Invalid, 'integer is not registered as validator'):
             _ = maat_scale(test_input, test_validation)
 
     def test_pre_post_transformation(self):
@@ -681,14 +680,14 @@ class ValidatorWrongInputTests(unittest.TestCase):
         """Approriate message shown when trying to use pre transformation that is not registered"""
         test_input = {'id': float(23)}
         test_validation = {'id': {'validator': 'int', 'pre_transform': 'integer'}}
-        with self.assertRaisesRegexp(Invalid, 'integer is not registered as transformation'):
+        with self.assertRaisesRegex(Invalid, 'integer is not registered as transformation'):
             _ = maat_scale(test_input, test_validation)
 
     def test_not_set_post_transformation_function(self):
         """a helpfull message is shown when trying to use post transformation that is not registered"""
         test_input = {'id': 23}
         test_validation = {'id': {'validator': 'float', 'transform': 'integer'}}
-        with self.assertRaisesRegexp(Invalid, 'integer is not registered as transformation'):
+        with self.assertRaisesRegex(Invalid, 'integer is not registered as transformation'):
             _ = maat_scale(test_input, test_validation)
 
     def test_non_dictionary_function(self):
@@ -696,17 +695,17 @@ class ValidatorWrongInputTests(unittest.TestCase):
         test_input_list = ['id', float(23)]
         test_input_tuple = ('id', float(23))
         test_validation = {'id': {'validator': 'int', 'transform': 'int'}}
-        with self.assertRaisesRegexp(Invalid, "\['id', 23.0\] not a dictionary but is of type list"):
+        with self.assertRaisesRegex(Invalid, "\['id', 23.0\] not a dictionary but is of type list"):
             _ = maat_scale(test_input_list, test_validation)
 
-        with self.assertRaisesRegexp(Invalid, "\('id', 23.0\) not a dictionary but is of type tuple"):
+        with self.assertRaisesRegex(Invalid, "\('id', 23.0\) not a dictionary but is of type tuple"):
             _ = maat_scale(test_input_tuple, test_validation)
 
     def test_item_nullable(self):
         """a helpfull message is shown when trying to use post transformation that is not registered"""
         test_input = {'id': None}
         test_validation = {'id': {'validator': 'float'}}
-        with self.assertRaisesRegexp(Invalid, 'key: \"id\" contains invalid item \"None\" with type \"NoneType\": not of type float'):
+        with self.assertRaisesRegex(Invalid, 'key: \"id\" contains invalid item \"None\" with type \"NoneType\": not of type float'):
             _ = maat_scale(test_input, test_validation)
 
         test_validation = {'id': {'validator': 'float', 'null_able': True}}
@@ -778,7 +777,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
             'id': {'validator': 'int', 'args': {'min_amount': 1}},
             'addresses': {'validator': 'valid_address', 'list': True, 'nested': True}
         }
-        with self.assertRaisesRegexp(Invalid, "addresses is in blacklist of blacklisted"):
+        with self.assertRaisesRegex(Invalid, "addresses is in blacklist of blacklisted"):
             _ = maat_scale(test_input, test_validation)
 
     def test_validate_fail_within_nested_list_dicts_with_custom_validation(self):
@@ -807,7 +806,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
               'street': {'validator': 'valid_address'}}
             }
         }
-        with self.assertRaisesRegexp(Invalid, "street is in blacklist of blacklisted"):
+        with self.assertRaisesRegex(Invalid, "street is in blacklist of blacklisted"):
             _ = maat_scale(test_input, test_validation)
 
 class TestValidationDecorator(unittest.TestCase):
@@ -869,11 +868,11 @@ class TestValidationDecorator(unittest.TestCase):
             return locals()
 
         # change type of number from int to str
-        with self.assertRaisesRegexp(Invalid, 'key: "number" contains invalid item "2" with type "str": not of type int'):
+        with self.assertRaisesRegex(Invalid, 'key: "number" contains invalid item "2" with type "str": not of type int'):
             result = foo(number='2', name='foo bar', kind='apple')
 
         # let's remove an argument
-        with self.assertRaisesRegexp(Invalid, 'key:"kind" is not set'):
+        with self.assertRaisesRegex(Invalid, 'key:"kind" is not set'):
             result = foo(number=2, name='foo bar')
 
         # tests that functions still works
@@ -910,11 +909,11 @@ class TestValidationDecorator(unittest.TestCase):
             return locals()
 
         # change type of number from int to str
-        with self.assertRaisesRegexp(KeyError, ''):
+        with self.assertRaisesRegex(KeyError, ''):
             result = foo(number='2', name='foo bar', kind='apple')
 
         # let's remove an argument
-        with self.assertRaisesRegexp(KeyError, ''):
+        with self.assertRaisesRegex(KeyError, ''):
             result = foo(number=2, name='foo bar')
 
         # tests that functions still works

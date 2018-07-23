@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import re
 import sys
 import json
@@ -26,7 +24,7 @@ def str_validation(val, key=None, min_length=None, max_length=None, regex=None, 
         except (ValueError, TypeError):
             raise Invalid('key: "{0}" contains invalid item "{1}": unable to convert from type "{2}" to str'.format(key, type(val).__name__, val))
 
-    if not isinstance(val, basestring):
+    if not isinstance(val, str):
         raise Invalid('key: "{0}" contains invalid item "{1}" with type "{2}": not of type string'.format(key, val, type(val).__name__))
 
     if min_length is not None and len(val) < min_length:
@@ -147,7 +145,7 @@ def get_validation_func(item):
 
 
 def get_validation_args(item):
-    return {k: v for k, v, in item.iteritems() if k not in special_arguments}
+    return {k: v for k, v, in item.items() if k not in special_arguments}
 
 
 def get_transformation_func(item, type_transformation):
@@ -164,14 +162,14 @@ def get_transformation_func(item, type_transformation):
 
 def keys_equality(input_dict, counter_dict):
     try:
-        return all(k in counter_dict for k in input_dict.iterkeys())
+        return all(k in counter_dict for k in input_dict.keys())
     except (TypeError, AttributeError):
         return False
 
 
 def find_missing_keys(input_dict, counter_dict):
     try:
-        return ', '.join([key for key in input_dict.iterkeys() if key not in counter_dict])
+        return ', '.join([key for key in input_dict.keys() if key not in counter_dict])
     except (TypeError, AttributeError):
         raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict).__name__))
 
@@ -185,7 +183,7 @@ def maat_scale(input_dict, counter_dict, counter=0):
         raise Invalid('{0}: invalid key'.format(find_missing_keys(input_dict, counter_dict)))
 
     validated_items = {}
-    for key, item in counter_dict.iteritems():
+    for key, item in counter_dict.items():
 
         try:
             val = input_dict[key]
@@ -250,7 +248,7 @@ def maat_scale(input_dict, counter_dict, counter=0):
         else:
             validation_func(key=key, val=val, **validation_args)
 
-            for nested_key, nested_val in val.iteritems():
+            for nested_key, nested_val in val.items():
 
                 # make sure dictionary is present.
                 if key not in validated_items:

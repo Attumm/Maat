@@ -14,13 +14,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../'
 def encode(msg_text):
     secret_key = os.environ.get('secret', 'dontfailhere')
     cipher = AES.new(secret_key, AES.MODE_ECB) 
-    return base64.b64encode(cipher.encrypt(msg_text.rjust(32)))
+    return base64.b64encode(cipher.encrypt(msg_text.rjust(32))).decode('utf-8')
 
 
 def decode(encoded):
     secret_key = os.environ.get('secret', 'dontfailhere')
     cipher = AES.new(secret_key,AES.MODE_ECB) 
-    return cipher.decrypt(base64.b64decode(encoded)).strip()
+    return cipher.decrypt(base64.b64decode(encoded)).strip().decode('utf-8')
     
 
 import maat
@@ -109,7 +109,7 @@ class TestEncryptDecrypt(unittest.TestCase):
         }
 
         err_msg = 'key: "name" contains invalid item "John Doe": does not adhere to regex rules Jane'
-        with self.assertRaisesRegexp(maat.Invalid, err_msg):
+        with self.assertRaisesRegex(maat.Invalid, err_msg):
             validated_items = maat.scale(test_input, counter_dict)
 
 
