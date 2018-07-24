@@ -660,15 +660,24 @@ class ValidatorWrongInputTests(unittest.TestCase):
         """Items that will raise an exception"""
         del(self.test_validation['name'])
 
-        with self.assertRaisesRegex(Invalid, 'invalid keys: name :expected keys: id, type'):
+        expected_expection_msg = 'invalid keys: name :expected keys: id, type'
+        if sys.version_info[1] < 6:
+            expected_expection_msg = 'invalid keys: name'
+
+        with self.assertRaisesRegex(Invalid, expected_expection_msg):
             _ = maat_scale(self.test_input, self.test_validation)
+
 
     def test_wrong_key_validation(self):
         """Items that will raise an exception"""
         self.test_validation['user'] = self.test_validation['name']
         del(self.test_validation['name'])
 
-        with self.assertRaisesRegex(Invalid, 'invalid keys: name :expected keys: id, type, user'):
+        expected_expection_msg = 'invalid keys: name :expected keys: id, type, user'
+        if sys.version_info[1] < 6:
+            expected_expection_msg = 'invalid keys: name'
+
+        with self.assertRaisesRegex(Invalid, expected_expection_msg):
             _ = maat_scale(self.test_input, self.test_validation)
 
     def test_missing_input_key_validation(self):
