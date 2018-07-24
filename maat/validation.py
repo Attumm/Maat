@@ -169,7 +169,8 @@ def keys_equality(input_dict, counter_dict):
 
 def find_missing_keys(input_dict, counter_dict):
     try:
-        return ', '.join([key for key in input_dict.keys() if key not in counter_dict])
+        found_keys = ', '.join([key for key in input_dict.keys() if key not in counter_dict])
+        return '{} :expected keys: {}'.format(found_keys, ', '.join(counter_dict.keys()))
     except (TypeError, AttributeError):
         raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict).__name__))
 
@@ -180,7 +181,7 @@ def maat_scale(input_dict, counter_dict, counter=0):
         raise Invalid('{0}: invalid depth of dict'.format(counter))
         
     if not keys_equality(input_dict, counter_dict):
-        raise Invalid('{0}: invalid key'.format(find_missing_keys(input_dict, counter_dict)))
+        raise Invalid('invalid keys: {}'.format(find_missing_keys(input_dict, counter_dict)))
 
     validated_items = {}
     for key, item in counter_dict.items():

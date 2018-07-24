@@ -3,9 +3,6 @@ from setuptools import setup
 
 current = path.abspath(path.dirname(__file__))
 
-with open(path.join(current, 'README.rst')) as f:
-    long_description = f.read()
- 
 setup(
     name='Maat',
     author='Melvin Bijman',

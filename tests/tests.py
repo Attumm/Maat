@@ -658,9 +658,24 @@ class ValidatorWrongInputTests(unittest.TestCase):
 
     def test_missing_key_validation(self):
         """Items that will raise an exception"""
-        del self.test_validation['name']
+        del(self.test_validation['name'])
 
-        with self.assertRaisesRegex(Invalid, 'name: invalid key'):
+        with self.assertRaisesRegex(Invalid, 'invalid keys: name :expected keys: id, type'):
+            _ = maat_scale(self.test_input, self.test_validation)
+
+    def test_wrong_key_validation(self):
+        """Items that will raise an exception"""
+        self.test_validation['user'] = self.test_validation['name']
+        del(self.test_validation['name'])
+
+        with self.assertRaisesRegex(Invalid, 'invalid keys: name :expected keys: id, type, user'):
+            _ = maat_scale(self.test_input, self.test_validation)
+
+    def test_missing_input_key_validation(self):
+        """Items that will raise an exception"""
+        del(self.test_input['id'])
+
+        with self.assertRaisesRegex(Invalid, 'key:"id" is not set'):
             _ = maat_scale(self.test_input, self.test_validation)
 
     def test_not_set_validator(self):
