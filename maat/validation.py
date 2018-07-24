@@ -169,7 +169,7 @@ def keys_equality(input_dict, counter_dict):
 
 def find_missing_keys(input_dict, counter_dict):
     try:
-        found_keys = ', '.join([key for key in input_dict.keys() if key not in counter_dict])
+        found_keys = ', '.join([key for key in sorted(input_dict.keys()) if key not in counter_dict])
         return '{} :expected keys: {}'.format(found_keys, ', '.join(counter_dict.keys()))
     except (TypeError, AttributeError):
         raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict).__name__))
