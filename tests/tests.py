@@ -26,9 +26,9 @@ class TestValidation(unittest.TestCase):
             'type': 'banana',
         }
         self.test_validation = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'name': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 35, 'regex': r'(\w+ )(\w+)'}},
-            'type': {'validator': 'str', 'args': {'choices': ['apple', 'banana', 'citrus']}}
+            'id': {'validator': 'int', 'min_amount': 1},
+            'name': {'validator': 'str', 'min_length': 1, 'max_length': 35, 'regex': r'(\w+ )(\w+)'},
+            'type': {'validator': 'str', 'choices': ['apple', 'banana', 'citrus']}
         }
 
     def test_validation(self):
@@ -143,10 +143,11 @@ class TestValidation(unittest.TestCase):
             }
         }
         self.test_validation = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'addresses': {'validator': 'dict', 'args': {'key_regex': r'(\w+ )'}, 'nested': {
-                'street': {'validator': 'str', 'args': {'min_length': 5, 'max_length': 99}},
-                'number': {'validator': 'int', 'args': {'min_amount': 1}}}
+            'id': {'validator': 'int', 'min_amount': 1},
+            'addresses': {'validator': 'dict', 'key_regex': r'(\w+ )', 'nested': {
+                'street': {'validator': 'str', 'min_length': 5, 'max_length': 99},
+                'number': {'validator': 'int', 'min_amount': 1},
+                }
             }
         }
         validated_items = maat_scale(self.test_input, self.test_validation)
@@ -164,10 +165,10 @@ class TestValidation(unittest.TestCase):
             ]
         }
         self.test_validation = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'addresses': {'validator': 'list', 'args': {},
+            'id': {'validator': 'int', 'min_amount': 1},
+            'addresses': {'validator': 'list',
                 'list_dicts': {
-                    'street': {'validator': 'str', 'args': {'min_length': 5, 'max_length': 99},},
+                    'street': {'validator': 'str', 'min_length': 5, 'max_length': 99},
                 }
             }
         }
@@ -186,12 +187,12 @@ class TestValidation(unittest.TestCase):
             }
         }
         self.test_validation = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'addresses': {'validator': 'dict', 'args': {'key_regex': r'(\w+ )'},
+            'id': {'validator': 'int', 'min_amount': 1},
+            'addresses': {'validator': 'dict', 'key_regex': r'(\w+ )',
                 'nested': {
-                    'street': {'validator': 'dict', 'args': {'min_amount': 5, 'max_length': 99},
+                    'street': {'validator': 'dict', 'min_amount': 5, 'max_length': 99,
                         'nested': {
-                            'two': {'validator': 'str', 'args': {'min_length': 3, 'max_length': 99}},
+                            'two': {'validator': 'str', 'min_length': 3, 'max_length': 99},
                         }
                     }
                 }
@@ -250,11 +251,11 @@ class TestValidation(unittest.TestCase):
             }
         }
         addresses_item = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'addresses': {'validator': 'list', 'args': {}, 'nested': {
-                'street': {'validator': 'dict', 'args': {'min_amount': 5, 'max_length': 99}, 'nested': {
-                    'two': {'validator': 'str', 'args': {'min_length': 3, 'max_length': 99}},
-                    '222': {'validator': 'str', 'args': {'min_length': 3, 'max_length': 99}},
+            'id': {'validator': 'int', 'min_amount': 1},
+            'addresses': {'validator': 'list', 'nested': {
+                'street': {'validator': 'dict', 'min_amount': 5, 'max_length': 99, 'nested': {
+                    'two': {'validator': 'str', 'min_length': 3, 'max_length': 99},
+                    '222': {'validator': 'str', 'min_length': 3, 'max_length': 99},
                         }
                     }
                 }
@@ -262,9 +263,9 @@ class TestValidation(unittest.TestCase):
         }
 
         geo_item = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'name': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 35, 'regex': '([^\s]+)'}},
-            'type': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 25, 'regex': r'([^\s]+)'}},
+            'id': {'validator': 'int', 'min_amount': 1},
+            'name': {'validator': 'str', 'min_length': 1, 'max_length': 35, 'regex': '([^\s]+)'},
+            'type': {'validator': 'str', 'min_length': 1, 'max_length': 25, 'regex': r'([^\s]+)'},
             'x': {'validator': 'float'},
             'y': {'validator': 'float'},
             'address': {'validator': 'dict',
@@ -273,12 +274,13 @@ class TestValidation(unittest.TestCase):
 
         nested_dict_validation = {
             'data': {'validator': 'dict', 'nested': {
-                'people': {'validator': 'dict', 'args': {'min_amount': 1, 'max_amount': 99}, 'aso_array': True,
+                'people': {'validator': 'dict', 'min_amount': 1, 'max_amount': 99, 'aso_array': True,
                     'nested': geo_item},
                 'streets': {'validator': 'dict', 'nested': {
-                    'id': {'validator': 'int', 'args': {'min_amount': 1}},
+                    'id': {'validator': 'int', 'min_amount': 1},
                     'addresses': {'validator': 'list', 'list_dicts': True, 'nested': {
-                        'street': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 99}}}
+                        'street': {'validator': 'str', 'min_length': 1, 'max_length': 99}
+                                }
                             }
                         }
                     }
@@ -338,13 +340,13 @@ class TestValidation(unittest.TestCase):
             }
         }
         addresses_item = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'addresses': {'validator': 'list', 'args': {}, 'nested': {
-                'street': {'validator': 'dict', 'args': {'min_amount': 5, 'max_length': 99}, 'nested': {
-                    'two': {'validator': 'str', 'args': {'min_length': 3, 'max_length': 99}},
-                    '222': {'validator': 'str', 'args': {'min_length': 3, 'max_length': 99, 'choices': [
+            'id': {'validator': 'int', 'min_amount': 1},
+            'addresses': {'validator': 'list', 'nested': {
+                'street': {'validator': 'dict', 'min_amount': 5, 'max_length': 99, 'nested': {
+                    'two': {'validator': 'str', 'min_length': 3, 'max_length': 99},
+                    '222': {'validator': 'str', 'min_length': 3, 'max_length': 99, 'choices': [
                         'not_part_of_choices',
-                        'fail_here']}},
+                        'fail_here']},
                         }
                     }
                 }
@@ -352,9 +354,9 @@ class TestValidation(unittest.TestCase):
         }
 
         geo_item = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'name': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 35, 'regex': '([^\s]+)'}},
-            'type': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 25, 'regex': r'([^\s]+)'}},
+            'id': {'validator': 'int', 'min_amount': 1},
+            'name': {'validator': 'str', 'min_length': 1, 'max_length': 35, 'regex': '([^\s]+)'},
+            'type': {'validator': 'str', 'min_length': 1, 'max_length': 25, 'regex': r'([^\s]+)'},
             'x': {'validator': 'float'},
             'y': {'validator': 'float'},
             'address': {'validator': 'dict',
@@ -363,12 +365,13 @@ class TestValidation(unittest.TestCase):
 
         nested_dict_validation = {
             'data': {'validator': 'dict', 'nested': {
-                'people': {'validator': 'dict', 'args': {'min_amount': 1, 'max_amount': 99}, 'aso_array': True,
+                'people': {'validator': 'dict', 'min_amount': 1, 'max_amount': 99, 'aso_array': True,
                     'nested': geo_item},
                 'streets': {'validator': 'dict', 'nested': {
-                    'id': {'validator': 'int', 'args': {'min_amount': 1}},
+                    'id': {'validator': 'int', 'min_amount': 1},
                     'addresses': {'validator': 'list', 'list_dicts': True, 'nested': {
-                        'street': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 99}}}
+                        'street': {'validator': 'str', 'min_length': 1, 'max_length': 99}
+                                }
                             }
                         }
                     }
@@ -392,12 +395,12 @@ class TestValidation(unittest.TestCase):
         # set last item
         current['last'] = 4
 
-        counter_current['nested_dic'] = {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}
+        counter_current['nested_dic'] = {'validator': 'dict', 'min_amount': 0, 'max_amount': 10, 'nested': {}}
         for _ in range(times - 1):
-            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}}
+            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'min_amount': 0, 'max_amount': 10, 'nested': {}}}
             counter_current = counter_current['nested_dic']['nested']
 
-        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'args': {'min_amount': 1, 'max_amount': 10}}}
+        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'min_amount': 1, 'max_amount': 10}}
 
         validated_items = maat_scale(input_dict, counter_dict)
         difference = ddiff(validated_items, input_dict)
@@ -415,13 +418,13 @@ class TestValidation(unittest.TestCase):
         # set last item
         current['last'] = 4
 
-        counter_current['nested_dic'] = {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}
+        counter_current['nested_dic'] = {'validator': 'dict', 'min_amount': 0, 'max_amount': 10, 'nested': {}}
         for _ in range(times - 1):
-            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}}
+            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'min_amount': 0, 'max_amount': 10, 'nested': {}}}
             counter_current = counter_current['nested_dic']['nested']
 
         # increase minimal amount to 5
-        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'args': {'min_amount': 5, 'max_amount': 10}}}
+        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'min_amount': 5, 'max_amount': 10}}
 
         with self.assertRaisesRegex(Invalid, 'key: "last" contains invalid item "4": integer is less then 5'):
             _ = maat_scale(input_dict, counter_dict)
@@ -438,12 +441,12 @@ class TestValidation(unittest.TestCase):
         # set last item
         current['last'] = 4
 
-        counter_current['nested_dic'] = {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}
+        counter_current['nested_dic'] = {'validator': 'dict', 'min_amount': 0, 'max_amount': 10, 'nested': {}}
         for _ in range(times - 1):
-            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'args': {'min_amount': 0, 'max_amount': 10}, 'nested': {}}}
+            counter_current['nested_dic']['nested'] = {'nested_dic': {'validator': 'dict', 'min_amount': 0, 'max_amount': 10, 'nested': {}}}
             counter_current = counter_current['nested_dic']['nested']
 
-        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'args': {'min_amount': 1, 'max_amount': 10}}}
+        counter_current['nested_dic']['nested'] = {'last': {'validator': 'int', 'min_amount': 1, 'max_amount': 10}}
 
         error_msg = sys.getrecursionlimit() - 49
         with self.assertRaisesRegex(Invalid, '{}: invalid depth of dict'.format(error_msg)):
@@ -648,9 +651,9 @@ class ValidatorWrongInputTests(unittest.TestCase):
             'type': 'banana',
         }
         self.test_validation = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
-            'name': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 35, 'regex': r'(\w+ )(\w+)'}},
-            'type': {'validator': 'str', 'args': {'choices': ['apple', 'banana', 'citrus']}}
+            'id': {'validator': 'int', 'min_amount': 1},
+            'name': {'validator': 'str', 'min_length': 1, 'max_length': 35, 'regex': r'(\w+ )(\w+)'},
+            'type': {'validator': 'str', 'choices': ['apple', 'banana', 'citrus']}
         }
 
     def test_missing_key_validation(self):
@@ -738,7 +741,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
             ]
         }
         test_validation = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
+            'id': {'validator': 'int', 'min_amount': 1},
             'addresses': {'validator': 'valid_address', 'skip_failed': True, 'list': True, 'nested': True}
         }
         expected_result = {
@@ -774,7 +777,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
             ]
         }
         test_validation = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
+            'id': {'validator': 'int', 'min_amount': 1},
             'addresses': {'validator': 'valid_address', 'list': True, 'nested': True}
         }
         with self.assertRaisesRegex(Invalid, "addresses is in blacklist of blacklisted"):
@@ -801,7 +804,7 @@ class ValidatorWrongInputTests(unittest.TestCase):
             ]
         }
         test_validation = {
-            'id': {'validator': 'int', 'args': {'min_amount': 1}},
+            'id': {'validator': 'int', 'min_amount': 1},
             'addresses': {'validator': 'list', 'list_dicts': True, 'nested': {
               'street': {'validator': 'valid_address'}}
             }
@@ -818,9 +821,9 @@ class TestValidationDecorator(unittest.TestCase):
             'kind': 'banana',
         }
         self.test_validation = {
-            'number': {'validator': 'int', 'args': {'min_amount': 1}},
-            'name': {'validator': 'str', 'args': {'min_length': 1, 'max_length': 35, 'regex': r'(\w+ )(\w+)'}},
-            'kind': {'validator': 'str', 'args': {'choices': ['apple', 'banana', 'citrus']}}
+            'number': {'validator': 'int', 'min_amount': 1},
+            'name': {'validator': 'str', 'min_length': 1, 'max_length': 35, 'regex': r'(\w+ )(\w+)'},
+            'kind': {'validator': 'str', 'choices': ['apple', 'banana', 'citrus']}
         }
 
     def test_validation_of_arguments(self):

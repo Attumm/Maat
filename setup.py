@@ -11,14 +11,6 @@ setup(
     author='Melvin Bijman',
     author_email='bijman.m.m@gmail.com',
     version='0.82',
-    tests_requires=[
-        'jsonpickle==0.9.5',
-        'attrs==18.1.0',
-        'coverage==4.5.1',
-        'deepdiff==3.3.0',
-        'hypothesis==3.66.6',
-        'pycrypto==2.6.1',
-    ],
     license='MIT',
 
     url='https://github.com/Attumm/Maat',

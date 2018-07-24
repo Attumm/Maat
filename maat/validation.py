@@ -196,11 +196,6 @@ def maat_scale(input_dict, counter_dict, counter=0):
             else:
                 raise Invalid('key:"{0}" is not set'.format(key))
 
-        #TODO old syntax support, tests should move over.
-        if 'args' in item:
-            item.update(item['args'])
-            del item['args']
-
         # # if the value is None, check for default value or check if it was required
         if val is None and item.get('null_able'):
             validated_items[key] = None
