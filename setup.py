@@ -12,6 +12,10 @@ setup(
 
     py_modules=['maat'],
 
+    description='Validate like maat',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+
     url='https://github.com/Attumm/Maat',
 
     classifiers=[
