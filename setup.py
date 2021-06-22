@@ -11,6 +11,9 @@ setup(
     license='MIT',
 
     py_modules=['maat'],
+    packages=['maat'],
+
+    platforms=['any'],
 
     description='Validate like maat',
     long_description=long_description,
