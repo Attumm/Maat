@@ -1,4 +1,4 @@
-from .validation import maat_scale, Invalid
+from .maat import maat_scale, Invalid
 
 def validate_args(validation_dic, fail_is_none=False, custom_exception=None):
     def decorator(func):

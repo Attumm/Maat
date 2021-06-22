@@ -1,6 +1,8 @@
-jsonpickle==0.9.5
-attrs==18.1.0
-coverage==4.5.1
-deepdiff==3.3.0
-hypothesis==3.66.6
+attrs==21.2.0
+coverage==5.5
+deepdiff==5.5.0
+hypothesis==6.14.0
+jsonpickle==2.0.0
+ordered-set==4.0.2
 pycrypto==2.6.1
+sortedcontainers==2.4.0
