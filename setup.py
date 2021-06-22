@@ -1,13 +1,15 @@
-from os import path
+import io
+
 from setuptools import setup
 
-current = path.abspath(path.dirname(__file__))
+with io.open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
     name='Maat',
     author='Melvin Bijman',
     author_email='bijman.m.m@gmail.com',
-    version='0.8.5',
+    version='0.8.6',
     license='MIT',
 
     py_modules=['maat'],
