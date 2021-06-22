@@ -9,7 +9,7 @@ setup(
     name='Maat',
     author='Melvin Bijman',
     author_email='bijman.m.m@gmail.com',
-    version='0.8.6',
+    version='1.0.0',
     license='MIT',
 
     py_modules=['maat'],
