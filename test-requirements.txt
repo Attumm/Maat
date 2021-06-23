@@ -2,7 +2,7 @@ attrs==21.2.0
 build==0.5.1
 coverage==5.5
 deepdiff>=5
-hypothesis==6.14.0
+hypothesis~=6.14.0
 jsonpickle==2.0.0
 ordered-set==4.0.2
 packaging==20.9
