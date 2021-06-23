@@ -1,6 +1,5 @@
 # Maat
 [![Build Status](https://travis-ci.com/Attumm/Maat.svg?branch=main)](https://travis-ci.com/Attumm/Maat)
-
 [![Coverage Status](https://coveralls.io/repos/github/Attumm/Maat/badge.svg)](https://coveralls.io/github/Attumm/Maat)
 
 Maat is a easy extensible transformation and validation library for Python.
