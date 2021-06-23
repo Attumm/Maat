@@ -4,14 +4,19 @@ import json
 import math
 
 from uuid import UUID
-from datetime import datetime
-
 
 config = {
     'depth_limit': (sys.getrecursionlimit() - 50)
-    }
+}
 
-special_arguments = ['nested', 'list', 'aso_array', 'skip_failed', 'null_able', 'optional', 'default_value', 'validator', 'pre_transform', 'transform', 'list_dicts', 'empty_list']
+
+VALIDATOR = 'type'
+special_arguments = [
+        VALIDATOR,
+        'nested', 'list', 'aso_array', 'skip_failed', 'null_able', 'optional',
+        'default_value', 'pre_transform', 'transform', 'list_dicts', 'empty_list'
+        ]
+
 
 class Invalid(Exception):
     pass
@@ -104,7 +109,7 @@ def dict_validation(val, key=None, min_amount=None, max_amount=None, key_min=Non
         raise Invalid('key: "{0}" contains invalid item "{1}": contains more then maximum amount of {2}'.format(key, val, max_amount))
 
     if key_regex is not None and not all(bool(re.match(key_regex, str(i))) for i in val.keys()):
-            raise Invalid('{0}: has dictionary key that does not adhere to regex {1}'.format(key, key_regex))
+        raise Invalid('{0}: has dictionary key that does not adhere to regex {1}'.format(key, key_regex))
 
     return val
 
@@ -139,9 +144,9 @@ registered_transformation = {
 
 def get_validation_func(item):
     try:
-        return registered_functions[item['validator']]
+        return registered_functions[item[VALIDATOR]]
     except KeyError:
-        raise Invalid('{} is not registered as validator'.format(item.get('validator')))
+        raise Invalid('{} is not registered as type'.format(item.get(VALIDATOR)))
 
 
 def get_validation_args(item):
@@ -179,7 +184,7 @@ def maat_scale(input_dict, counter_dict, counter=0):
     counter += 1
     if counter > config['depth_limit']:
         raise Invalid('{0}: invalid depth of dict'.format(counter))
-        
+
     if not keys_equality(input_dict, counter_dict):
         raise Invalid('invalid keys: {}'.format(find_missing_keys(input_dict, counter_dict)))
 
@@ -245,7 +250,6 @@ def maat_scale(input_dict, counter_dict, counter=0):
             validation_func(key=key, val=val, **validation_args)
 
             for nested_key, nested_val in val.items():
-
                 # make sure dictionary is present.
                 if key not in validated_items:
                     validated_items[key] = {}

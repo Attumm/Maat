@@ -2484,20 +2484,20 @@ nested_dict = {
 }
 addresses_item = {
     'id': {
-        'validator': 'int',
+        'type': 'int',
         'min_amount': 1
     },
     'addresses': {
-        'validator': 'list', 
+        'type': 'list', 
         'nested': {
             'street': {
-                'validator': 'dict', 'min_amount': 5, 'max_length': 99,
+                'type': 'dict', 'min_amount': 5, 'max_length': 99,
                 'nested': {
                     'two': {
-                        'validator': 'str', 'min_length': 3, 'max_length': 99,
+                        'type': 'str', 'min_length': 3, 'max_length': 99,
                     },
                     '222': {
-                        'validator': 'str', 'min_length': 3, 'max_length': 99,
+                        'type': 'str', 'min_length': 3, 'max_length': 99,
                     },
                 }
             }
@@ -2507,39 +2507,39 @@ addresses_item = {
 
 TOPOMAP_ITEM = {
     'id': {
-        'validator': 'int', 'min_amount': 1
+        'type': 'int', 'min_amount': 1
     },
     'name': {
-        'validator': 'str', 'min_length': 1, 'max_length': 35, 'regex': '([^\s]+)'
+        'type': 'str', 'min_length': 1, 'max_length': 35, 'regex': '([^\s]+)'
     },
     'type': {
-        'validator': 'str', 'min_length': 1, 'max_length': 25, 'regex': r'([^\s]+)'
+        'type': 'str', 'min_length': 1, 'max_length': 25, 'regex': r'([^\s]+)'
     },
-    "x": {'validator': 'float'},
-    "y": {'validator': 'float'},
+    "x": {'type': 'float'},
+    "y": {'type': 'float'},
     "address": {
-        'validator': 'dict',
+        'type': 'dict',
         'nested': addresses_item
     }
 }
 
 nested_dict_validation = {
     'data': {
-        'validator': 'dict',
+        'type': 'dict',
         'nested': {
             'people': {
-                'validator': 'dict', 'min_amount': 1, 'max_amount': 23499,
+                'type': 'dict', 'min_amount': 1, 'max_amount': 23499,
                 'aso_array': True,
                 'nested': TOPOMAP_ITEM
             },
             'streets': {
-                'validator': 'dict', 
+                'type': 'dict', 
                 'nested': {
-                    'id': {'validator': 'int', 'min_amount': 1
+                    'id': {'type': 'int', 'min_amount': 1
                     },
                     'addresses': {
-                        'validator': 'list', 'list_dicts': True, 'nested': {
-                            'street': {'validator': 'str', 'min_length': 5, 'max_length': 99,
+                        'type': 'list', 'list_dicts': True, 'nested': {
+                            'street': {'type': 'str', 'min_length': 5, 'max_length': 99,
                             },
                         }
                     }

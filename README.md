@@ -22,7 +22,7 @@ Throws Invalid exception when validation fails, Maat has a fail fast policy.
 ```python
     >>> import maat
     >>> user = {'name': 'John Doe'}
-    >>> user_validation = {'name': {'validator': 'str', 'choices': ['John Doe', 'Jane Doe']}}
+    >>> user_validation = {'name': {'type': 'str', 'choices': ['John Doe', 'Jane Doe']}}
     >>> maat.scale(user, user_validation)
     {'name': 'John Doe'}
     
@@ -40,7 +40,19 @@ Throws Invalid exception when validation fails, Maat has a fail fast policy.
     
     >>> maat.scale({'name': 'Jane Doe'}, user_validation)
     {'name': 'Jane Doe'}
+
+    >>> @maat.validate_args(user_validation)
+        def create_user(name):
+            return "success"
+
+    >>> create_user("peter pan")
+    Traceback (most recent call last):
+    maat.maat.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ['John Doe', 'Jane Doe']
+
+    >>> create_user("John Doe")
+    'success'
 ```
+
 
 ## Authors
 
