@@ -1,4 +1,4 @@
-coverage~=5.5
+coverage>=5
 deepdiff>=5
 hypothesis>=5
 jsonpickle==2.0.0
