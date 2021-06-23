@@ -1,5 +1,6 @@
 # Maat
 [![Build Status](https://travis-ci.org/Attumm/Maat.svg?branch=master)](https://travis-ci.org/Attumm/Maat)
+[![Coverage Status](https://coveralls.io/repos/github/Attumm/Maat/badge.svg)](https://coveralls.io/github/Attumm/Maat)
 
 Maat is a easy extensible transformation and validation library for Python.
 Build for corner cases.
