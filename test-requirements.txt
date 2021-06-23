@@ -1,6 +1,6 @@
 coverage>=5*
 deepdiff>=5
-hypothesis>=5
+hypothesis>=4
 jsonpickle==2.0.0
 ordered-set==4.0.2
 packaging==20.9
