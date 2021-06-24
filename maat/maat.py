@@ -231,10 +231,9 @@ def maat_scale(input_dict, counter_dict, counter=0):
         elif 'list_dicts' in item:
 
             validation_func(key=key, val=val, **validation_args)
+            if key not in validated_items:
+                validated_items[key] = []
             for nested_item in val:
-                if key not in validated_items:
-                    validated_items[key] = []
-
                 try:
                     validated_items[key].append(post_transformation(maat_scale(pre_transformation(nested_item), counter_dict[key]['nested'], counter=counter)))
                 except Invalid:
