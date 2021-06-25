@@ -199,7 +199,10 @@ def maat_scale(input_dict, counter_dict):
             validated_items[key] = None
             continue
 
-        validation_func = get_validation_func(item)
+        try:
+            validation_func =  registered_functions[item[VALIDATOR]]
+        except KeyError:
+            raise Invalid('{} is not registered as type'.format(item.get(VALIDATOR)))
         validation_args = get_validation_args(item)
         pre_transformation = get_transformation_func(item, 'pre_transform')
         post_transformation = get_transformation_func(item, 'transform')
