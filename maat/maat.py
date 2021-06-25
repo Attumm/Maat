@@ -6,11 +6,11 @@ import math
 from uuid import UUID
 
 VALIDATOR = 'type'
-special_arguments = [
+special_arguments = {
         VALIDATOR,
         'nested', 'list', 'aso_array', 'skip_failed', 'null_able', 'optional',
         'default_value', 'pre_transform', 'transform', 'list_dicts', 'empty_list'
-        ]
+        }
 
 
 class Invalid(Exception):
@@ -223,8 +223,7 @@ def maat_scale(input_dict, counter_dict):
         elif 'list_dicts' in item:
 
             validation_func(key=key, val=val, **validation_args)
-            if key not in validated_items:
-                validated_items[key] = []
+            validated_items[key] = []
             for nested_item in val:
                 try:
                     validated_items[key].append(post_transformation(maat_scale(pre_transformation(nested_item), counter_dict[key]['nested'])))
