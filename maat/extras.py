@@ -1,4 +1,4 @@
-from .maat import maat_scale, Invalid
+from .maat import scale, Invalid
 
 def validate_args(validation_dic, fail_is_none=False, custom_exception=None):
     def decorator(func):
@@ -6,7 +6,7 @@ def validate_args(validation_dic, fail_is_none=False, custom_exception=None):
             if len(args) > 0:
                 kwargs.update(zip(func.__code__.co_varnames, args))
             try:
-                cleaned_kwargs = maat_scale(kwargs, validation_dic)
+                cleaned_kwargs = scale(kwargs, validation_dic)
             except Invalid as e:
                 if fail_is_none:
                     return None

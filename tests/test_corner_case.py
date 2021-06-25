@@ -5,7 +5,7 @@ import unittest
 from deepdiff import DeepDiff as ddiff
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
-from maat import maat_scale
+from maat import scale, validate
 
 nested_dict = {
     "data": {
@@ -2554,7 +2554,11 @@ class TestCornerCasesDict(unittest.TestCase):
 
     def test_validation(self):
         """Happy path test"""
-        validated_items = maat_scale(nested_dict, nested_dict_validation)
+        validated_items = scale(nested_dict, nested_dict_validation)
+        difference = ddiff(validated_items, nested_dict)
+        self.assertEqual(difference, {})
+
+        validated_items = validate(nested_dict, nested_dict_validation)
         difference = ddiff(validated_items, nested_dict)
 
         # if the differ finds no difference a empty dictionary is returned

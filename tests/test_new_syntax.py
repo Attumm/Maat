@@ -8,7 +8,7 @@ from deepdiff import DeepDiff as ddiff
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
 from maat import uuid_validation
-from maat import maat_scale, Invalid
+from maat import validate, scale, Invalid
 from maat import int_validation, str_validation, float_validation, list_validation, dict_validation
 
 from maat import validate_args
@@ -34,7 +34,13 @@ class TestNewSyntaxValidation(unittest.TestCase):
 
     def test_validation(self):
         """Happy path test"""
-        validated_items = maat_scale(self.test_input, self.test_validation)
+        validated_items = scale(self.test_input, self.test_validation)
+        difference = ddiff(validated_items, self.test_input)
+
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+        validated_items = validate(self.test_input, self.test_validation)
         difference = ddiff(validated_items, self.test_input)
 
         # if the differ finds no difference a empty dictionary is returned
@@ -44,7 +50,9 @@ class TestNewSyntaxValidation(unittest.TestCase):
         test_input = {'id': 23}
         expected = {'id': '23'}
         counter_dict = {'id': {'type': 'str', 'cast': True}}
-        result = maat.maat_scale(test_input, counter_dict)
+        result = maat.scale(test_input, counter_dict)
+        self.assertEqual(expected, result)
+        result = maat.validate(test_input, counter_dict)
         self.assertEqual(expected, result)
 
 

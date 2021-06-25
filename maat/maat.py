@@ -1,5 +1,4 @@
 import re
-import sys
 import json
 import math
 
@@ -175,7 +174,7 @@ def find_missing_keys(input_dict, counter_dict):
         raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict).__name__))
 
 
-def maat_scale(input_dict, counter_dict):
+def scale(input_dict, counter_dict):
 
     if not keys_equality(input_dict, counter_dict):
         raise Invalid('invalid keys: {}'.format(find_missing_keys(input_dict, counter_dict)))
@@ -200,10 +199,12 @@ def maat_scale(input_dict, counter_dict):
             continue
 
         try:
-            validation_func =  registered_functions[item[VALIDATOR]]
+            validation_func = registered_functions[item[VALIDATOR]]
         except KeyError:
             raise Invalid('{} is not registered as type'.format(item.get(VALIDATOR)))
-        validation_args = get_validation_args(item)
+
+        validation_args = {k: v for k, v, in item.items() if k not in special_arguments}
+
         pre_transformation = get_transformation_func(item, 'pre_transform')
         post_transformation = get_transformation_func(item, 'transform')
 
@@ -229,14 +230,14 @@ def maat_scale(input_dict, counter_dict):
             validated_items[key] = []
             for nested_item in val:
                 try:
-                    validated_items[key].append(post_transformation(maat_scale(pre_transformation(nested_item), counter_dict[key]['nested'])))
+                    validated_items[key].append(post_transformation(scale(pre_transformation(nested_item), counter_dict[key]['nested'])))
                 except Invalid:
                     if not item.get('skip_failed'):
                         raise
 
         # the item is nested. we have to start over to do the same the one level deeper
         elif not item.get('aso_array', False):
-            validated_items[key] = post_transformation(maat_scale(pre_transformation(input_dict[key]), counter_dict[key]['nested']))
+            validated_items[key] = post_transformation(scale(pre_transformation(input_dict[key]), counter_dict[key]['nested']))
 
         # the item is a "associative array" dictionary e.g keys are numerical indexes
         else:
@@ -249,6 +250,84 @@ def maat_scale(input_dict, counter_dict):
                 if nested_key not in validated_items[key]:
                     validated_items[key][nested_key] = {}
 
-                validated_items[key][nested_key] = maat_scale(nested_val, counter_dict[key]['nested'])
+                validated_items[key][nested_key] = scale(nested_val, counter_dict[key]['nested'])
 
     return validated_items
+
+
+def validate(input_dict, counter_dict):
+
+    if not keys_equality(input_dict, counter_dict):
+        raise Invalid('invalid keys: {}'.format(find_missing_keys(input_dict, counter_dict)))
+
+    validated_items = {}
+    for key, item in counter_dict.items():
+        try:
+            val = input_dict[key]
+        except KeyError:
+            if 'default_value' in item:
+                validated_items[key] = item['default_value']
+                continue
+            elif item.get('optional'):
+                continue
+            else:
+                raise Invalid('key:"{0}" is not set'.format(key))
+
+        # # if the value is None, check for default value or check if it was required
+        if val is None and item.get('null_able'):
+            validated_items[key] = None
+            continue
+
+        try:
+            validation_func = registered_functions[item[VALIDATOR]]
+        except KeyError:
+            raise Invalid('{} is not registered as type'.format(item.get(VALIDATOR)))
+
+        validation_args = {k: v for k, v, in item.items() if k not in special_arguments}
+
+        # the validation can be done on top level, life is good
+        if 'nested' not in item:
+            validated_items[key] = validation_func(key=key, val=val, **validation_args)
+
+        elif 'list' in item:
+            validated_items[key] = item.get('empty_list', []) if len(val) == 0 else []
+
+            for nested_item in val:
+                # within a list a item should be skipable
+                try:
+                    validated_items[key].append(validation_func(key=key, val=nested_item, **validation_args))
+                except Invalid:
+                    if not item.get('skip_failed'):
+                        raise
+
+        # the item is nested with a list of dictionary items
+        elif 'list_dicts' in item:
+
+            validation_func(key=key, val=val, **validation_args)
+            validated_items[key] = []
+            for nested_item in val:
+                try:
+                    validated_items[key].append(validate(nested_item, counter_dict[key]['nested']))
+                except Invalid:
+                    if not item.get('skip_failed'):
+                        raise
+
+        # the item is nested. we have to start over to do the same the one level deeper
+        elif not item.get('aso_array', False):
+            validated_items[key] = validate(input_dict[key], counter_dict[key]['nested'])
+
+        # the item is a "associative array" dictionary e.g keys are numerical indexes
+        else:
+            validation_func(key=key, val=val, **validation_args)
+
+            for nested_key, nested_val in val.items():
+                # make sure dictionary is present.
+                if key not in validated_items:
+                    validated_items[key] = {}
+                if nested_key not in validated_items[key]:
+                    validated_items[key][nested_key] = {}
+
+                validated_items[key][nested_key] = validate(nested_val, counter_dict[key]['nested'])
+
+    return validated_items
+
