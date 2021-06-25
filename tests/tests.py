@@ -422,8 +422,9 @@ class TestValidation(unittest.TestCase):
 
         with self.assertRaisesRegex(Invalid, 'key: "last" contains invalid item "4": integer is less then 5'):
             _ = maat_scale(input_dict, counter_dict)
-
+    @unittest.skip
     def test_validate_invalid_depth(self):
+        """Could be reused"""
         input_dict = current = {}
         counter_dict = counter_current = {}
 

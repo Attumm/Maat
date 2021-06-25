@@ -5,11 +5,6 @@ import math
 
 from uuid import UUID
 
-config = {
-    'depth_limit': (sys.getrecursionlimit() - 50)
-}
-
-
 VALIDATOR = 'type'
 special_arguments = [
         VALIDATOR,
@@ -180,10 +175,7 @@ def find_missing_keys(input_dict, counter_dict):
         raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict).__name__))
 
 
-def maat_scale(input_dict, counter_dict, counter=0):
-    counter += 1
-    if counter > config['depth_limit']:
-        raise Invalid('{0}: invalid depth of dict'.format(counter))
+def maat_scale(input_dict, counter_dict):
 
     if not keys_equality(input_dict, counter_dict):
         raise Invalid('invalid keys: {}'.format(find_missing_keys(input_dict, counter_dict)))
@@ -235,14 +227,14 @@ def maat_scale(input_dict, counter_dict, counter=0):
                 validated_items[key] = []
             for nested_item in val:
                 try:
-                    validated_items[key].append(post_transformation(maat_scale(pre_transformation(nested_item), counter_dict[key]['nested'], counter=counter)))
+                    validated_items[key].append(post_transformation(maat_scale(pre_transformation(nested_item), counter_dict[key]['nested'])))
                 except Invalid:
                     if not item.get('skip_failed'):
                         raise
 
         # the item is nested. we have to start over to do the same the one level deeper
         elif not item.get('aso_array', False):
-            validated_items[key] = post_transformation(maat_scale(pre_transformation(input_dict[key]), counter_dict[key]['nested'], counter=counter))
+            validated_items[key] = post_transformation(maat_scale(pre_transformation(input_dict[key]), counter_dict[key]['nested']))
 
         # the item is a "associative array" dictionary e.g keys are numerical indexes
         else:
@@ -255,6 +247,6 @@ def maat_scale(input_dict, counter_dict, counter=0):
                 if nested_key not in validated_items[key]:
                     validated_items[key][nested_key] = {}
 
-                validated_items[key][nested_key] = maat_scale(nested_val, counter_dict[key]['nested'], counter=counter)
+                validated_items[key][nested_key] = maat_scale(nested_val, counter_dict[key]['nested'])
 
     return validated_items
