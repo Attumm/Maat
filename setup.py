@@ -9,7 +9,7 @@ setup(
     name='Maat',
     author='Melvin Bijman',
     author_email='bijman.m.m@gmail.com',
-    version='1.0.1',
+    version='2.0.0',
     license='MIT',
 
     py_modules=['maat'],
@@ -17,7 +17,7 @@ setup(
 
     platforms=['any'],
 
-    description='Validate like maat',
+    description='Validate like Maat',
     long_description=long_description,
     long_description_content_type='text/markdown',
 
@@ -31,8 +31,6 @@ setup(
         'License :: OSI Approved :: MIT License',
 
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',

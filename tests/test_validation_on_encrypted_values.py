@@ -52,10 +52,10 @@ class TestEncryptDecrypt(unittest.TestCase):
         }
         counter_dict = {
             'name': {
-                'validator': 'str', 'regex': 'John Doe', 'transform': 'encode'
+                'type': 'str', 'regex': 'John Doe', 'transform': 'encode'
             },
             'address': {
-                'validator': 'str', 'regex': 'John Doe Street', 'transform': 'encode'
+                'type': 'str', 'regex': 'John Doe Street', 'transform': 'encode'
             },
         }
         validated_items = maat.scale(test_input, counter_dict)
@@ -74,11 +74,11 @@ class TestEncryptDecrypt(unittest.TestCase):
 
         counter_dict = {
             'name': {
-                'validator': 'str', 'regex': 'John Doe',
+                'type': 'str', 'regex': 'John Doe',
                 'pre_transform': 'decode', 'transform': 'encode'
                 },
             'address': {
-                'validator': 'str', 'regex': 'John Doe Street',
+                'type': 'str', 'regex': 'John Doe Street',
                 'pre_transform': 'decode', 'transform': 'encode'
                 },
         }
@@ -99,11 +99,11 @@ class TestEncryptDecrypt(unittest.TestCase):
 
         counter_dict = {
             'name': {
-                'validator': 'str', 'regex': 'Jane',
+                'type': 'str', 'regex': 'Jane',
                 'pre_transform': 'decode', 'transform': 'encode'
                 },
             'address': {
-                'validator': 'str', 'regex': 'John Doe Street',
+                'type': 'str', 'regex': 'John Doe Street',
                 'pre_transform': 'decode', 'transform': 'encode'
                 },
         }
