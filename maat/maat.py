@@ -60,7 +60,7 @@ def find_missing_keys(input_dict, counter_dict):
 def scale(input_dict, counter_dict):
 
     if not keys_equality(input_dict, counter_dict):
-        raise Invalid('invalid keys: {}'.format(find_missing_keys(input_dict, counter_dict)))
+        raise Invalid(f"invalid keys: {find_missing_keys(input_dict, counter_dict)}")
 
     validated_items = {}
     for key, item in counter_dict.items():
