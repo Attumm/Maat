@@ -11,22 +11,22 @@ def str_validation(val, key=None, min_length=None, max_length=None, regex=None, 
         try:
             val = str(val)
         except (ValueError, TypeError):
-            raise Invalid('key: "{0}" contains invalid item "{1}": unable to convert from type "{2}" to str'.format(key, type(val).__name__, val))
+            raise Invalid(f'key: "{key}" contains invalid item "{type(val).__name__}": unable to convert from type "{val}" to str')
 
     if not isinstance(val, str):
-        raise Invalid('key: "{0}" contains invalid item "{1}" with type "{2}": not of type string'.format(key, val, type(val).__name__))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}" with type "{type(val).__name__}": not of type string')
 
     if min_length is not None and len(val) < min_length:
-        raise Invalid('key: "{0}" contains invalid item "{1}": less then minimal length of {2}'.format(key, val, min_length))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": less then minimal length of {min_length}')
 
     if max_length is not None and len(val) > max_length:
-        raise Invalid('key: "{0}" contains invalid item "{1}": more then maximal length of {2}'.format(key, val, max_length))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": more then maximal length of {max_length}')
 
     if regex is not None and not bool(re.match(regex, val)):
-        raise Invalid('key: "{0}" contains invalid item "{1}": does not adhere to regex rules {2}'.format(key, val, regex))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": does not adhere to regex rules {regex}')
 
     if choices is not None and val not in choices:
-        raise Invalid('key: "{0}" contains invalid item "{1}": not in valid choices {2}'.format(key, val, choices))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": not in valid choices {choices}')
 
     return val
 
@@ -36,16 +36,16 @@ def int_validation(val, key=None, min_amount=None, max_amount=None, cast=None):
         try:
             val = int(val)
         except (ValueError, TypeError):
-            raise Invalid('key: "{0}" contains invalid item "{1}": unable to convert from type "{2}" to integer'.format(key, type(val).__name__, val))
+            raise Invalid(f'key: "{key}" contains invalid item "{type(val).__name__}": unable to convert from type "{val}" to integer')
 
     if not isinstance(val, int):
-        raise Invalid('key: "{0}" contains invalid item "{1}" with type "{2}": not of type int'.format(key, val, type(val).__name__))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}" with type "{type(val).__name__}": not of type int')
 
     if min_amount is not None and val < min_amount:
-        raise Invalid('key: "{0}" contains invalid item "{1}": integer is less then {2}'.format(key, val, min_amount))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": integer is less then {min_amount}')
 
     if max_amount is not None and val > max_amount:
-        raise Invalid('key: "{0}" contains invalid item "{1}": integer is less then {2}'.format(key, val, max_amount))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": integer is less then {max_amount}')
 
     return val
 
@@ -55,45 +55,45 @@ def float_validation(val, key=None, min_amount=None, max_amount=None, cast=None)
         try:
             val = float(val)
         except (ValueError, TypeError):
-            raise Invalid('key: "{0}" contains invalid item "{1}": unable to convert from type "{2}" to float'.format(key, type(val).__name__, val))
+            raise Invalid(f'key: "{key}" contains invalid item "{type(val).__name__}": unable to convert from type "{val}" to float')
 
     if not isinstance(val, float) or math.isnan(val):
-        raise Invalid('key: "{0}" contains invalid item "{1}" with type "{2}": not of type float'.format(key, val, type(val).__name__))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}" with type "{type(val).__name__}": not of type float')
 
     if min_amount is not None and val < min_amount:
-        raise Invalid('key: "{0}" contains invalid item "{1}": float is less then {2}'.format(key, val, min_amount))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": float is less then {min_amount}')
 
     if max_amount is not None and val > max_amount:
-        raise Invalid('key: "{0}" contains invalid item "{1}": float is less then {2}'.format(key, val, max_amount))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": float is less then {max_amount}')
 
     return val
 
 
 def list_validation(val, key=None, min_amount=None, max_amount=None):
     if not isinstance(val, list):
-        raise Invalid('key: "{0}" contains invalid item "{1}" with type "{2}": not of type list'.format(key, val, type(val).__name__))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}" with type "{type(val).__name__}": not of type list')
 
     if min_amount is not None and len(val) < min_amount:
-        raise Invalid('key: "{0}" contains invalid item "{1}": contains less then minimal amount of {2}'.format(key, val, min_amount))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": contains less then minimal amount of {min_amount}')
 
     if max_amount is not None and len(val) > max_amount:
-        raise Invalid('{0} contains invalid item {1}: contains more then maximum amount of {2}'.format(key, val, max_amount))
+        raise Invalid(f'{key} contains invalid item {val}: contains more then maximum amount of {max_amount}')
 
     return val
 
 
 def dict_validation(val, key=None, min_amount=None, max_amount=None, key_min=None, key_max=None, key_regex=None):
     if not isinstance(val, dict):
-        raise Invalid('"{}": is not a dictionary'.format(key))
+        raise Invalid(f'"{key}": is not a dictionary')
 
     if min_amount is not None and len(val) < min_amount:
-        raise Invalid('key: "{0}" contains invalid item "{1}": contains less then minimal amount of {2}'.format(key, val, min_amount))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": contains less then minimal amount of {min_amount}')
 
     if max_amount is not None and len(val) > max_amount:
-        raise Invalid('key: "{0}" contains invalid item "{1}": contains more then maximum amount of {2}'.format(key, val, max_amount))
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": contains more then maximum amount of {max_amount}')
 
     if key_regex is not None and not all(bool(re.match(key_regex, str(i))) for i in val.keys()):
-        raise Invalid('{0}: has dictionary key that does not adhere to regex {1}'.format(key, key_regex))
+        raise Invalid(f'{key}: has dictionary key that does not adhere to regex {key_regex}')
 
     return val
 
@@ -102,7 +102,7 @@ def uuid_validation(val, key=None):
     try:
         _ = UUID(val, version=4)
     except (ValueError, AttributeError, TypeError):
-        raise Invalid('key: "{0}" contains invalid item "{1}": invalid UUID4'.format(key, val))
+        raise Invalid('key: "{key}" contains invalid item "{val}": invalid UUID4')
 
     return val
 
