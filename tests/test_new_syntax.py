@@ -6,14 +6,16 @@ import unittest
 from deepdiff import DeepDiff as ddiff
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+import maat
 
-from maat import uuid_validation
-from maat import validate, scale, Invalid
-from maat import int_validation, str_validation, float_validation, list_validation, dict_validation
+from maat import validate, scale
+from maat.exceptions import Invalid
+
+from maat.validations import uuid_validation
+from maat.validations import int_validation, str_validation, float_validation, list_validation, dict_validation
 
 from maat import validate_args
 
-import maat
 
 class TestNewSyntaxValidation(unittest.TestCase):
 

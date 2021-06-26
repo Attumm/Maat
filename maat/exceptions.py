@@ -1,0 +1,2 @@
+class Invalid(Exception):
+    pass
