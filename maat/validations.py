@@ -1,10 +1,10 @@
 import re
-import json
 import math
 
 from uuid import UUID
 
 from .exceptions import Invalid
+
 
 def str_validation(val, key=None, min_length=None, max_length=None, regex=None, choices=None, cast=None):
     if cast:
