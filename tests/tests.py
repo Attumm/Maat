@@ -65,7 +65,7 @@ class TestValidation(unittest.TestCase):
         del self.test_input['type']
         self.test_validation['type']['optional'] = True
         excepted_value = 'banana'
-        self.test_validation['type']['default_value'] = excepted_value
+        self.test_validation['type']['default'] = excepted_value
 
         validated_items = validate(self.test_input, self.test_validation)
         difference = ddiff(validated_items, self.test_input)
@@ -77,7 +77,7 @@ class TestValidation(unittest.TestCase):
 
         del self.test_input['type']
         excepted_value = 'banana'
-        self.test_validation['type']['default_value'] = excepted_value
+        self.test_validation['type']['default'] = excepted_value
 
         validated_items = validate(self.test_input, self.test_validation)
         difference = ddiff(validated_items, self.test_input)
