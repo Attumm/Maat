@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../'
 
 from maat import validate
 
-from maat import validate_args
+from maat import protected
 from maat.exceptions import Invalid
 
 from maat.validations import uuid_validation
@@ -781,7 +781,7 @@ class TestValidationDecorator(unittest.TestCase):
 
     def test_validation_of_arguments(self):
         """Happy path test"""
-        @validate_args(self.test_validation)
+        @protected(self.test_validation)
         def foo(number, name, kind):
             return locals()
 
@@ -793,7 +793,7 @@ class TestValidationDecorator(unittest.TestCase):
 
     def test_validation_of_arguments_diffirent_input(self):
 
-        @validate_args(self.test_validation)
+        @protected(self.test_validation)
         def foo(number, name, kind):
             return locals()
 
@@ -819,7 +819,7 @@ class TestValidationDecorator(unittest.TestCase):
     def test_validation_of_argument_fail(self):
         """Test with validation failures"""
 
-        @validate_args(self.test_validation)
+        @protected(self.test_validation)
         def foo(number, name, kind):
             return locals()
 
@@ -840,7 +840,7 @@ class TestValidationDecorator(unittest.TestCase):
     def test_validation_of_argument_fail_returns_none(self):
         """Test with validation failures handle them and return None"""
 
-        @validate_args(self.test_validation, fail_is_none=True)
+        @protected(self.test_validation, fail_is_none=True)
         def foo(number, name, kind):
             return locals()
 
@@ -860,7 +860,7 @@ class TestValidationDecorator(unittest.TestCase):
     def test_validation_of_argument_fail_with_custom_exception(self):
         """Test with validation failures raises an custom exception"""
 
-        @validate_args(self.test_validation, custom_exception=KeyError)
+        @protected(self.test_validation, custom_exception=KeyError)
         def foo(number, name, kind):
             return locals()
 

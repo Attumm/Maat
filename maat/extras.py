@@ -1,7 +1,7 @@
 from .maat import scale, Invalid
 
 
-def validate_args(validation_dic, fail_is_none=False, custom_exception=None):
+def protected(validation_dic, fail_is_none=False, custom_exception=None):
     def decorator(func):
         def wrapper(*args, **kwargs):
             if len(args) > 0:

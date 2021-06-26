@@ -14,8 +14,6 @@ from maat.exceptions import Invalid
 from maat.validations import uuid_validation
 from maat.validations import int_validation, str_validation, float_validation, list_validation, dict_validation
 
-from maat import validate_args
-
 
 class TestNewSyntaxValidation(unittest.TestCase):
 

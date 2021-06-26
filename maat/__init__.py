@@ -6,8 +6,8 @@ from .validations import int_validation, str_validation, float_validation, list_
 
 from .transformations import registered_transformation
 
-from .extras import validate_args
+from .extras import protected
 
-__all__ = ['scale', 'validate_args', 'Invalid', 'registered_functions', 'registered_transformation',
+__all__ = ['scale', 'protected', 'Invalid', 'registered_functions', 'registered_transformation',
            'int_validation', 'str_validation', 'float_validation', 'list_validation', 'dict_validation', 'uuid_validation'
            'validate']
