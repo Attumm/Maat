@@ -23,7 +23,7 @@ def get_validation_func(item):
     try:
         return registered_functions[item[VALIDATOR]]
     except KeyError:
-        raise Invalid('{} is not registered as type'.format(item.get(VALIDATOR)))
+        raise Invalid(f"{item.get(VALIDATOR)} is not registered as type")
 
 
 def get_validation_args(item):
@@ -39,7 +39,7 @@ def get_transformation_func(item, type_transformation):
     try:
         return registered_transformation[transformation]
     except KeyError:
-        raise Invalid('{} is not registered as transformation'.format(transformation))
+        raise Invalid(f"{transformation} is not registered as transformation")
 
 
 def keys_equality(input_dict, counter_dict):
@@ -51,10 +51,10 @@ def keys_equality(input_dict, counter_dict):
 
 def find_missing_keys(input_dict, counter_dict):
     try:
-        found_keys = ', '.join(set(input_dict) - set(counter_dict))
-        return '{} :expected keys: {}'.format(found_keys, ', '.join(counter_dict.keys()))
+        found_keys = ", ".join(set(input_dict) - set(counter_dict))
+        return f"{found_keys} :expected keys: {', '.join(counter_dict.keys())}"
     except (TypeError, AttributeError):
-        raise Invalid('{0} not a dictionary but is of type {1}'.format(input_dict, type(input_dict).__name__))
+        raise Invalid(f"{input_dict} not a dictionary but is of type {type(input_dict).__name__}")
 
 
 def scale(input_dict, counter_dict):
@@ -74,7 +74,7 @@ def scale(input_dict, counter_dict):
             elif item.get(OPTIONAL):
                 continue
             else:
-                raise Invalid('key:"{0}" is not set'.format(key))
+                raise Invalid(f'key:"{key}" is not set')
 
         # # if the value is None, check for default value or check if it was required
         if val is None and item.get(NULLABLE):
@@ -84,7 +84,7 @@ def scale(input_dict, counter_dict):
         try:
             validation_func = registered_functions[item[VALIDATOR]]
         except KeyError:
-            raise Invalid('{} is not registered as type'.format(item.get(VALIDATOR)))
+            raise Invalid(f"{item.get(VALIDATOR)} is not registered as type")
 
         validation_args = {k: v for k, v, in item.items() if k not in special_arguments}
 
@@ -141,7 +141,7 @@ def scale(input_dict, counter_dict):
 def validate(input_dict, counter_dict):
 
     if not keys_equality(input_dict, counter_dict):
-        raise Invalid('invalid keys: {}'.format(find_missing_keys(input_dict, counter_dict)))
+        raise Invalid(f"invalid keys: {find_missing_keys(input_dict, counter_dict)}")
 
     validated_items = {}
     for key, item in counter_dict.items():
@@ -154,7 +154,7 @@ def validate(input_dict, counter_dict):
             elif item.get(OPTIONAL):
                 continue
             else:
-                raise Invalid('key:"{0}" is not set'.format(key))
+                raise Invalid(f'key:"{key}" is not set')
 
         # # if the value is None, check for default value or check if it was required
         if val is None and item.get(NULLABLE):
@@ -164,7 +164,7 @@ def validate(input_dict, counter_dict):
         try:
             validation_func = registered_functions[item[VALIDATOR]]
         except KeyError:
-            raise Invalid('{} is not registered as type'.format(item.get(VALIDATOR)))
+            raise Invalid(f"{item.get(VALIDATOR)} is not registered as type")
 
         validation_args = {k: v for k, v, in item.items() if k not in special_arguments}
 
