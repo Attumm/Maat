@@ -4,21 +4,21 @@
 [![Downloads](https://pepy.tech/badge/maat/week)](https://pepy.tech/project/maat)
 
 Maat is an easily extensible transformation and validation library for Python.
-Built for corner cases.
+Built for corner cases and speed.
 
-The project is named after the ancient Egyptian god Maat.
-Her scale was used to weight the heart described in the book of the dead.
+The project is named after the ancient Egyptian god [Maat](https://en.wikipedia.org/wiki/Maat).
+Her scale was used to weigh the heart as described in the book of the dead.
 
-Since the scale is magical besides validating values it can transform them too.
+Since Maats scale is magical, it not only validates values, it can transform them too.
 
 Maat does dictionary-to-dictionary validation and transformation.
-from those two dictionaries a new dictionary is created.
-Each value of the dictionary to be validated is passed through their validator and transformation functions.
+From those two dictionaries a new dictionary is created.
+Each value of the dictionary to be validated is passed through their validation and transformation functions.
 
 ## Examples
 
-Validate that input name is of type `str` and is either 'John Doe' or 'Jane Doe'.
-Throws `Invalid` exception when validation fails, Maat has a fail fast policy.
+This validates that input name is of type `str` and is either 'John Doe' or 'Jane Doe'.
+Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
 
 ```python
     >>> from maat import validate
