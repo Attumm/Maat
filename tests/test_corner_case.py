@@ -2488,10 +2488,10 @@ addresses_item = {
         'min_amount': 1
     },
     'addresses': {
-        'type': 'list', 
+        'type': 'dict',
         'nested': {
             'street': {
-                'type': 'dict', 'min_amount': 5, 'max_length': 99,
+                'type': 'dict', 'min_amount': 2, 'max_length': 99,
                 'nested': {
                     'two': {
                         'type': 'str', 'min_length': 3, 'max_length': 99,
@@ -2528,8 +2528,7 @@ nested_dict_validation = {
         'type': 'dict',
         'nested': {
             'people': {
-                'type': 'dict', 'min_amount': 1, 'max_amount': 23499,
-                'aso_array': True,
+                'type': 'aso_array', 'min_amount': 1, 'max_amount': 23499,
                 'nested': TOPOMAP_ITEM
             },
             'streets': {
@@ -2538,7 +2537,7 @@ nested_dict_validation = {
                     'id': {'type': 'int', 'min_amount': 1
                     },
                     'addresses': {
-                        'type': 'list', 'list_dicts': True, 'nested': {
+                        'type': 'list_dicts', 'nested': {
                             'street': {'type': 'str', 'min_length': 5, 'max_length': 99,
                             },
                         }
@@ -2563,3 +2562,7 @@ class TestCornerCasesDict(unittest.TestCase):
 
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
+        
+
+if __name__ == '__main__':
+    unittest.main()

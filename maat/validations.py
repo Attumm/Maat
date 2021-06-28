@@ -6,12 +6,12 @@ from uuid import UUID
 from .exceptions import Invalid
 
 
-def str_validation(val, key=None, min_length=None, max_length=None, regex=None, choices=None, cast=None):
+def str_validation(val, key=None, min_length=None, max_length=None, regex=None, choices=None, cast=None, *args, **kwargs):
     if cast:
         try:
             val = str(val)
         except (ValueError, TypeError):
-            raise Invalid(f'key: "{key}" contains invalid item "{type(val).__name__}": unable to convert from type "{val}" to str')
+            raise Invalid(f'key: "{key}" contains invalid item "{type(val).__name__}": unable to convert from type  to str')
 
     if not isinstance(val, str):
         raise Invalid(f'key: "{key}" contains invalid item "{val}" with type "{type(val).__name__}": not of type string')
@@ -31,7 +31,7 @@ def str_validation(val, key=None, min_length=None, max_length=None, regex=None, 
     return val
 
 
-def int_validation(val, key=None, min_amount=None, max_amount=None, cast=None):
+def int_validation(val, key=None, min_amount=None, max_amount=None, cast=None, *args, **kwargs):
     if cast:
         try:
             val = int(val)
@@ -50,7 +50,7 @@ def int_validation(val, key=None, min_amount=None, max_amount=None, cast=None):
     return val
 
 
-def float_validation(val, key=None, min_amount=None, max_amount=None, cast=None):
+def float_validation(val, key=None, min_amount=None, max_amount=None, cast=None, *args, **kwargs):
     if cast:
         try:
             val = float(val)
@@ -69,7 +69,7 @@ def float_validation(val, key=None, min_amount=None, max_amount=None, cast=None)
     return val
 
 
-def list_validation(val, key=None, min_amount=None, max_amount=None):
+def list_validation(val, key=None, min_amount=None, max_amount=None, *args, **kwargs):
     if not isinstance(val, list):
         raise Invalid(f'key: "{key}" contains invalid item "{val}" with type "{type(val).__name__}": not of type list')
 
@@ -82,23 +82,27 @@ def list_validation(val, key=None, min_amount=None, max_amount=None):
     return val
 
 
-def dict_validation(val, key=None, min_amount=None, max_amount=None, key_min=None, key_max=None, key_regex=None):
+def dict_validation(val, key=None, min_amount=None, max_amount=None, key_min=None, key_max=None, key_regex=None, *args, **kwargs):
     if not isinstance(val, dict):
         raise Invalid(f'"{key}": is not a dictionary')
 
     if min_amount is not None and len(val) < min_amount:
-        raise Invalid(f'key: "{key}" contains invalid item "{val}": contains less then minimal amount of {min_amount}')
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": {len(val)} contains less then minimal amount of {min_amount}')
 
     if max_amount is not None and len(val) > max_amount:
-        raise Invalid(f'key: "{key}" contains invalid item "{val}": contains more then maximum amount of {max_amount}')
+        raise Invalid(f'key: "{key}" contains invalid item "{val}": {len(val)} contains more then maximum amount of {max_amount}')
 
     if key_regex is not None and not all(bool(re.match(key_regex, str(i))) for i in val.keys()):
-        raise Invalid(f'{key}: has dictionary key that does not adhere to regex {key_regex}')
+        for i in val.keys():
+            if not re.match(key_regex, str(i)):
+                failed = str(i)
+                break
+        raise Invalid(f'{key}: has dictionary key "{failed}" that does not adhere to regex {key_regex}')
 
     return val
 
 
-def uuid_validation(val, key=None):
+def uuid_validation(val, key=None, *args, **kwargs):
     try:
         _ = UUID(val, version=4)
     except (ValueError, AttributeError, TypeError):
@@ -107,11 +111,13 @@ def uuid_validation(val, key=None):
     return val
 
 
-registered_functions = {
+types = {
     'int': int_validation,
     'str': str_validation,
     'float': float_validation,
     'uuid': uuid_validation,
     'list': list_validation,
+    'list_dicts': list_validation,
     'dict': dict_validation,
+    'aso_array': dict_validation,
 }
