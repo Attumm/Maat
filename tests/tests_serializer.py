@@ -141,7 +141,7 @@ class TestValidation(unittest.TestCase):
         }
         self.test_validation = {
             'id': {'type': 'int', 'min_amount': 1},
-            'addresses': {'type': 'dict', 'key_regex': r'(\w+ )', 'nested': {
+            'addresses': {'type': 'dict', 'key_regex': r'\w+', 'nested': {
                 'street': {'type': 'str', 'min_length': 5, 'max_length': 99},
                 'number': {'type': 'int', 'min_amount': 1},
                 }
@@ -150,6 +150,27 @@ class TestValidation(unittest.TestCase):
         validated_items = scale(self.test_input, self.test_validation)
         difference = ddiff(validated_items, self.test_input)
         self.assertEqual(difference, {})
+
+    def test_validate_nested_dict_fail_on_regex(self):
+        self.test_input = {
+            'id': 23,
+            'addresses': {
+                'street': 'John Doe Street',
+                'number': 123,
+            }
+        }
+        self.test_validation = {
+            'id': {'type': 'int', 'min_amount': 1},
+            'addresses': {'type': 'dict', 'key_regex': r'\d+', 'nested': {
+                'street': {'type': 'str', 'min_length': 5, 'max_length': 99},
+                'number': {'type': 'int', 'min_amount': 1},
+                }
+            }
+        }
+        with self.assertRaisesRegex(Invalid, 'addresses: has dictionary key "street" that does not adhere to regex \\\d+'):
+            _ = scale(self.test_input, self.test_validation)
+
+ 
 
     def test_validate_nested_list(self):
         self.test_input = {
@@ -185,9 +206,9 @@ class TestValidation(unittest.TestCase):
         }
         self.test_validation = {
             'id': {'type': 'int', 'min_amount': 1},
-            'addresses': {'type': 'dict', 'key_regex': r'(\w+ )',
+            'addresses': {'type': 'dict', 'key_regex': r'\w+',
                 'nested': {
-                    'street': {'type': 'dict', 'min_amount': 5, 'max_length': 99,
+                    'street': {'type': 'dict', 'min_amount': 1, 'max_length': 99,
                         'nested': {
                             'two': {'type': 'str', 'min_length': 3, 'max_length': 99},
                         }
@@ -249,8 +270,8 @@ class TestValidation(unittest.TestCase):
         }
         addresses_item = {
             'id': {'type': 'int', 'min_amount': 1},
-            'addresses': {'type': 'list', 'nested': {
-                'street': {'type': 'dict', 'min_amount': 5, 'max_length': 99, 'nested': {
+            'addresses': {'type': 'dict', 'nested': {
+                'street': {'type': 'dict', 'min_amount': 1, 'max_length': 99, 'nested': {
                     'two': {'type': 'str', 'min_length': 3, 'max_length': 99},
                     '222': {'type': 'str', 'min_length': 3, 'max_length': 99},
                         }
@@ -271,11 +292,11 @@ class TestValidation(unittest.TestCase):
 
         nested_dict_validation = {
             'data': {'type': 'dict', 'nested': {
-                'people': {'type': 'dict', 'min_amount': 1, 'max_amount': 99, 'aso_array': True,
+                'people': {'type': 'aso_array', 'min_amount': 1, 'max_amount': 99,
                     'nested': geo_item},
                 'streets': {'type': 'dict', 'nested': {
                     'id': {'type': 'int', 'min_amount': 1},
-                    'addresses': {'type': 'list', 'list_dicts': True, 'nested': {
+                    'addresses': {'type': 'list_dicts', 'nested': {
                         'street': {'type': 'str', 'min_length': 1, 'max_length': 99}
                                 }
                             }
@@ -338,8 +359,8 @@ class TestValidation(unittest.TestCase):
         }
         addresses_item = {
             'id': {'type': 'int', 'min_amount': 1},
-            'addresses': {'type': 'list', 'nested': {
-                'street': {'type': 'dict', 'min_amount': 5, 'max_length': 99, 'nested': {
+            'addresses': {'type': 'dict', 'nested': {
+                'street': {'type': 'dict', 'min_amount': 1, 'max_length': 99, 'nested': {
                     'two': {'type': 'str', 'min_length': 3, 'max_length': 99},
                     '222': {'type': 'str', 'min_length': 3, 'max_length': 99, 'choices': [
                         'not_part_of_choices',
@@ -362,11 +383,11 @@ class TestValidation(unittest.TestCase):
 
         nested_dict_validation = {
             'data': {'type': 'dict', 'nested': {
-                'people': {'type': 'dict', 'min_amount': 1, 'max_amount': 99, 'aso_array': True,
+                'people': {'type': 'aso_array', 'min_amount': 1, 'max_amount': 99,
                     'nested': geo_item},
                 'streets': {'type': 'dict', 'nested': {
                     'id': {'type': 'int', 'min_amount': 1},
-                    'addresses': {'type': 'list', 'list_dicts': True, 'nested': {
+                    'addresses': {'type': 'dict', 'nested': {
                         'street': {'type': 'str', 'min_length': 1, 'max_length': 99}
                                 }
                             }
@@ -733,38 +754,53 @@ class ValidatorWrongInputTests(unittest.TestCase):
         with self.assertRaisesRegex(Invalid, 'key: \"id\" contains invalid item \"None\" with type \"NoneType\": not of type float'):
             _ = scale(test_input, test_validation)
 
-        test_validation = {'id': {'type': 'float', 'null_able': True}}
+        test_validation = {'id': {'type': 'float', 'nullable': True}}
         validated_items = scale(test_input, test_validation)
         difference = ddiff(validated_items, test_input)
         self.assertEqual(difference, {})
 
+    def test_not_set_type_nested(self):
+        """Approriate message shown when trying to use a type that is not registered"""
+        from maat import types
+        types['newtype'] = lambda a: a
+
+        test_input = {'id': 23}
+        test_validation = {'id': {'type': 'newtype', 'nested': {'type': 'int'}}}
+
+        with self.assertRaisesRegex(Invalid, "type newtype can't handle nested structures, use aso_array, list_dicts, dict instead"):
+            _ = scale(test_input, test_validation)
+        del types['newtype']
+
     def test_validate_skip_instead_of_fail_within_nested_list_with_custom_validation(self):
-        from maat import registered_functions
-        def blacklist_address(key, val):
-            """Since this is a example blacklisted is hardcoded.
+        from maat import types
+        def denylist_address(key, val, *args, **kwargs):
+            """Since this is a example denylisted is hardcoded.
             It could come from config or an key value store at runtime
             Either within this function or given as argument.
             """
-            blacklist = ['blacklisted', 'black_listed', 'BLACKLISTED']
-            if val in blacklist:
-                raise Invalid('{0} is in blacklist of {1}'.format(key, val))
+            denylist = ['denylisted', 'deny_listed', 'DENYLISTED']
+            if val in denylist:
+                raise Invalid('{0} is in denylist of {1}'.format(key, val))
             return val
 
-        registered_functions['valid_address'] = blacklist_address
+        types['valid_address'] = denylist_address
         test_input = {
             'id': 23,
             'addresses': [
-                'blacklisted',
+                'denylisted',
                 'valid adress',
                 'also valid address',
-                'black_listed',
+                'deny_listed',
                 'valid again',
-                'BLACKLISTED',
+                'DENYLISTED',
             ]
         }
         test_validation = {
             'id': {'type': 'int', 'min_amount': 1},
-            'addresses': {'type': 'valid_address', 'skip_failed': True, 'list': True, 'nested': True}
+            'addresses': {'type': 'list', 'skip_failed': True, 'nested': {
+                'type': 'valid_address'
+                }
+            }
         }
         expected_result = {
             'id': 23,
@@ -778,60 +814,86 @@ class ValidatorWrongInputTests(unittest.TestCase):
         difference = ddiff(validated_items, expected_result)
         self.assertEqual(difference, {})
 
+    def test_validate_custom_validation_context_list_type_is_not_set(self):
+        test_input = {
+            'id': 23,
+            'addresses': [
+                'denylisted',
+                'valid adress',
+                'also valid address',
+                'deny_listed',
+                'valid again',
+                'DENYLISTED',
+            ]
+        }
+        test_validation = {
+            'id': {'type': 'int', 'min_amount': 1},
+            'addresses': {'type': 'list', 'nested': {
+                'type': 'not_registered'
+                }
+            }
+        }
+
+        with self.assertRaisesRegex(Invalid, 'not_registered is not registered as type'):
+            _ = scale(test_input, test_validation)
+
     def test_validate_fail_within_nested_list_with_custom_validation(self):
-        from maat import registered_functions
-        def blacklist_address(key, val):
-            """Since this is a example blacklisted is hardcoded.
+        from maat import types
+        def denylist_address(key, val, *args, **kwargs):
+            """Since this is a example denylisted is hardcoded.
             It could come from config or an key value store at runtime
             Either within this function or given as argument.
             """
-            blacklist = ['blacklisted', 'black_listed', 'BLACKLISTED']
-            if val in blacklist:
-                raise Invalid('{0} is in blacklist of {1}'.format(key, val))
+            denylist = ['denylisted', 'deny_listed', 'DENYLISTED']
+            if val in denylist:
+                raise Invalid('{0} is in denylist of {1}'.format(key, val))
             return val
 
-        registered_functions['valid_address'] = blacklist_address
+        types['valid_address'] = denylist_address
         test_input = {
             'id': 23,
             'addresses': [
                 'valid adress',
-                'blacklisted',
+                'denylisted',
             ]
         }
         test_validation = {
             'id': {'type': 'int', 'min_amount': 1},
-            'addresses': {'type': 'valid_address', 'list': True, 'nested': True}
+            'addresses': {'type': 'list', 'nested': {
+                'type': 'valid_address'
+                }
+            }
         }
-        with self.assertRaisesRegex(Invalid, "addresses is in blacklist of blacklisted"):
+        with self.assertRaisesRegex(Invalid, "addresses is in denylist of denylisted"):
             _ = scale(test_input, test_validation)
 
     def test_validate_fail_within_nested_list_dicts_with_custom_validation(self):
-        from maat import registered_functions
-        def blacklist_address(key, val):
-            """Since this is a example blacklisted is hardcoded.
+        from maat import types
+        def denylist_address(key, val, *args, **kwargs):
+            """Since this is a example denylisted is hardcoded.
             It could come from config or an key value store at runtime
             Either within this function or given as argument.
             """
-            blacklist = ['blacklisted', 'black_listed', 'BLACKLISTED']
-            if val in blacklist:
-                raise Invalid('{0} is in blacklist of {1}'.format(key, val))
+            denylist = ['denylisted', 'deny_listed', 'DENYLISTED']
+            if val in denylist:
+                raise Invalid('{0} is in denylist of {1}'.format(key, val))
             return val
 
-        registered_functions['valid_address'] = blacklist_address
+        types['valid_address'] = denylist_address
         test_input = {
             'id': 23,
             'addresses': [
                 {'street': 'valid adress'},
-                {'street': 'blacklisted'},
+                {'street': 'denylisted'},
             ]
         }
         test_validation = {
             'id': {'type': 'int', 'min_amount': 1},
-            'addresses': {'type': 'list', 'list_dicts': True, 'nested': {
+            'addresses': {'type': 'list_dicts', 'nested': {
               'street': {'type': 'valid_address'}}
             }
         }
-        with self.assertRaisesRegex(Invalid, "street is in blacklist of blacklisted"):
+        with self.assertRaisesRegex(Invalid, "street is in denylist of denylisted"):
             _ = scale(test_input, test_validation)
 
 class TestValidationDecorator(unittest.TestCase):

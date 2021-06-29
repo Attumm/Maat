@@ -9,4 +9,5 @@ source =
 omit = 
    setup.py
    *test*
+   maat/version.py
 

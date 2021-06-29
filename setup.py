@@ -9,7 +9,7 @@ setup(
     name='Maat',
     author='Melvin Bijman',
     author_email='bijman.m.m@gmail.com',
-    version='2.0.0',
+    version='3.0.0',
     license='MIT',
 
     py_modules=['maat'],
@@ -17,7 +17,7 @@ setup(
 
     platforms=['any'],
 
-    description='Validate like Maat',
+    description='Validate like a Maat',
     long_description=long_description,
     long_description_content_type='text/markdown',
 
