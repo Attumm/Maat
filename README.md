@@ -57,10 +57,10 @@ Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
     'success'
 ```
 
-
-## Authors
-
-* **Melvin Bijman** 
+## Installation
+```sh
+pip install maat
+```
 
 ## License
 
