@@ -15,6 +15,8 @@ Maat does dictionary-to-dictionary validation and transformation.
 From those two dictionaries a new dictionary is created.
 Each value of the dictionary to be validated is passed through their validation and transformation functions.
 
+Maat doesn't use other depenencies.
+
 ## Examples
 
 This validates that input name is of type `str` and is either 'John Doe' or 'Jane Doe'.
