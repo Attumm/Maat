@@ -82,7 +82,7 @@ def list_validation(val, key=None, min_amount=None, max_amount=None, *args, **kw
     return val
 
 
-def dict_validation(val, key=None, min_amount=None, max_amount=None, key_min=None, key_max=None, key_regex=None, *args, **kwargs):
+def dict_validation(val, key=None, min_amount=None, max_amount=None, key_regex=None, *args, **kwargs):
     if not isinstance(val, dict):
         raise Invalid(f'"{key}": is not a dictionary')
 
