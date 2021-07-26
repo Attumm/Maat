@@ -57,6 +57,19 @@ Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
     'success'
 ```
 
+## Starting Point Example
+```python
+validation = {
+    "int   ": {"type": "int", "cast": True, "min_amount": 1, "max_amount": 150},
+    "float ": {"type": "float", "cast": True, "min_amount": 1, "max_amount": 150},
+    "list  ": {"type": "list", "min_amount": 1, "max_amount": 5},
+    "dict  ": {"type": "dict", "min_amount": 1, "max_amount": 2, "key_regex": r"(\w+)"},
+    "string": {"type": "str", "cast": True, "min_length": 1,
+        "max_length": 12, "regex": r"(\w+ )(\w+)", "choices": ["John Doe", "Jane Doe"]
+    }
+}
+```
+
 ## Installation
 ```sh
 pip install maat
