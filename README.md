@@ -63,7 +63,7 @@ Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
 validation = {
     "int   ": {"type": "int", "cast": True, "min_amount": 1, "max_amount": 150},
     "float ": {"type": "float", "cast": True, "min_amount": 1, "max_amount": 150},
-    "list  ": {"type": "list", "min_amount": 1, "max_amount": 5},
+    "list  ": {"type": "list", "min_amount": 1, "max_amount": 5, "skip_failed": True},
     "dict  ": {"type": "dict", "min_amount": 1, "max_amount": 2, "key_regex": r"(\w+)"},
     "string": {"type": "str", "cast": True, "min_length": 1,
         "max_length": 12, "regex": r"(\w+ )(\w+)", "choices": ["John Doe", "Jane Doe"]
@@ -71,7 +71,9 @@ validation = {
 }
 ```
 
+#### Field Control
 Each field could be nullable, optional, default; they can be added to any field.
+For lists it's possible to skip failed items with skip_failed.
 ```python
 >>> input_dic = {"int   ": None}
 >>> validation = {
@@ -85,24 +87,24 @@ Each field could be nullable, optional, default; they can be added to any field.
     "str   ": None
 }
 ```
-
+#### Nesting
 Nested data structures, nested fields are treated the same as upper levels.
 It's possible to nest thousand of levels, it can be increased by upping recursion level of python.
 Nesting is done without any performance hit.
 ```python
-        input_dic = {
-            "foo": {
-                "foo_bar": "John Doe Street",
-                "foo_baz": 123,
-            }
-        }
-        validation = {
-            "foo": {"type": "dict", "key_regex": r"\w+", "nested": {
-                "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
-                "foo_baz": {"type": "int", "min_amount": 1},
-                }
-            }
-        }
+>>> input_dic = {
+    "foo": {
+	"foo_bar": "John Doe Street",
+	"foo_baz": 123,
+    }
+}
+>>> validation = {
+    "foo": {"type": "dict", "key_regex": r"\w+", "nested": {
+	"foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+	"foo_baz": {"type": "int", "min_amount": 1},
+	}
+    }
+}
 ```
 
 ## Installation
