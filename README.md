@@ -75,7 +75,7 @@ validation = {
 Each field could be nullable, optional, default; they can be added to any field.
 For lists it's possible to skip failed items with skip_failed.
 ```python
->>> input_dic = {"int   ": None}
+>>> input_dic = {"str   ": None}
 >>> validation = {
 	"int   ": {"type": "int", "min_amount": 1, "default": 42},
 	"float ": {"type": "float", "optional": True},
