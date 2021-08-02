@@ -79,13 +79,29 @@ Each field could be nullable, optional, default; they can be added to any field.
 	"float ": {"type": "float", "optional": True},
 	"str   ": {"type": "str", "nullable": True},
 }
->>> validate(test_input, test_validation)
+>>> validate(input_dic, validation)
 {
     "int   ": 42,
     "str   ": None
 }
 ```
 
+Nested data structures
+```python
+        input_dic = {
+            "foo": {
+                "foo_bar": "John Doe Street",
+                "foo_baz": 123,
+            }
+        }
+        validation = {
+            "foo": {"type": "dict", "key_regex": r"\w+", "nested": {
+                "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+                "foo_baz": {"type": "int", "min_amount": 1},
+                }
+            }
+        }
+```
 
 ## Installation
 ```sh

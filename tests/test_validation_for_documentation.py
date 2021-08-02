@@ -198,5 +198,25 @@ class TestValidations(unittest.TestCase):
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
-if __name__ == '__main__':
+    def test_validations_nested(self):
+        test_input = {
+            "foo": {
+                "foo_bar": "John Doe Street",
+                "foo_baz": 123,
+            }
+        }
+        test_validation = {
+            "foo": {"type": "dict", "key_regex": r"\w+", "nested": {
+                "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+                "foo_baz": {"type": "int", "min_amount": 1},
+                }
+            }
+        }
+        expected = test_input
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+if __name__ == "__main__":
     unittest.main()
