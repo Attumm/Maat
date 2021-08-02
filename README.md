@@ -19,30 +19,30 @@ Maat doesn't use other depenencies.
 
 ## Examples
 
-This validates that input name is of type `str` and is either 'John Doe' or 'Jane Doe'.
+This validates that input name is of type `str` and is either "John Doe" or "Jane Doe".
 Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
 
 ```python
     >>> from maat import validate
-    >>> user = {'name': 'John Doe'}
-    >>> user_validation = {'name': {'type': 'str', 'choices': ['John Doe', 'Jane Doe']}}
+    >>> user = {"name": "John Doe"}
+    >>> user_validation = {"name": {"type": "str", "choices": ["John Doe", "Jane Doe"]}}
     >>> validate(user, user_validation)
-    {'name': 'John Doe'}
+    {"name": "John Doe"}
     
-    >>> validate({'name': 'peter pan'}, user_validation)
+    >>> validate({"name": "peter pan"}, user_validation)
     Traceback (most recent call last):
-    maat.validation.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ['John Doe', 'Jane Doe']
+    maat.validation.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ["John Doe", "Jane Doe"]
     
-    >>> validate({'name': 42}, user_validation)
+    >>> validate({"name": 42}, user_validation)
     Traceback (most recent call last)
     maat.validation.Invalid: key: "name" contains invalid item "42" with type "int": not of type string
     
-    >>>  validate({'user': 'John Doe'}, user_validation)
+    >>>  validate({"user": "John Doe"}, user_validation)
     Traceback (most recent call last)
     maat.validation.Invalid: invalid keys: user :expected keys: name
     
-    >>> validate({'name': 'Jane Doe'}, user_validation)
-    {'name': 'Jane Doe'}
+    >>> validate({"name": "Jane Doe"}, user_validation)
+    {"name": "Jane Doe"}
 
     >>> import maat
     >>> @maat.protected(user_validation)
@@ -51,10 +51,10 @@ Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
 
     >>> create_user("peter pan")
     Traceback (most recent call last):
-    maat.maat.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ['John Doe', 'Jane Doe']
+    maat.maat.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ["John Doe", "Jane Doe"]
 
     >>> create_user("John Doe")
-    'success'
+    "success"
 ```
 
 ## Starting Point Example
