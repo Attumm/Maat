@@ -58,6 +58,7 @@ Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
 ```
 
 ## Starting Point Example
+
 ```python
 validation = {
     "int   ": {"type": "int", "cast": True, "min_amount": 1, "max_amount": 150},
@@ -69,6 +70,22 @@ validation = {
     }
 }
 ```
+
+Each field could be nullable, optional, default; they can be added to any field.
+```python
+>>> input_dic = {"int   ": None}
+>>> validation = {
+	"int   ": {"type": "int", "min_amount": 1, "default": 42},
+	"float ": {"type": "float", "optional": True},
+	"str   ": {"type": "str", "nullable": True},
+}
+>>> validate(test_input, test_validation)
+{
+    "int   ": 42,
+    "str   ": None
+}
+```
+
 
 ## Installation
 ```sh

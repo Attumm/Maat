@@ -130,5 +130,63 @@ class TestValidations(unittest.TestCase):
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
+    def test_validations_use_default(self):
+        test_input = {}
+        test_validation = {
+            "int   ": {"type": "int", "default": 42},
+        }
+        expected = {
+            "int   ": 42,
+        }
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+    def test_validations_use_optional(self):
+        test_input = {}
+        test_validation = {
+            "float   ": {"type": "float", "optional": True},
+        }
+        expected = {}
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+    def test_validations_use_nullable(self):
+        test_input = {
+            "str   ": None
+        }
+        test_validation = {
+                "str   ": {"type": "str", "nullable": True},
+        }
+        expected = {
+            "str   ": None
+        }
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+
+    def test_validations_combined_use_nullable_optional_default(self):
+        test_input = {
+            "str   ": None
+        }
+        test_validation = {
+                "int   ": {"type": "int", "min_amount": 1, "default": 42},
+                "float ": {"type": "float", "optional": True},
+                "str   ": {"type": "str", "nullable": True},
+        }
+        expected = {
+            "int   ": 42,
+            "str   ": None
+        }
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
 if __name__ == '__main__':
     unittest.main()
