@@ -182,7 +182,7 @@ def validate(input_dict, counter_dict):
 
             for nested_item in val:
                 try:
-                    validated_items[key].append(validation_func(key=key, val=nested_item, **item[NESTED])) # ADD test item nested
+                    validated_items[key].append(validation_func(key=key, val=nested_item, **item[NESTED]))  # ADD test item nested
                 except Invalid:
                     if not item.get(SKIPFAILED):
                         raise

@@ -8,7 +8,7 @@ import hypothesis.strategies as st
 
 from deepdiff import DeepDiff as ddiff
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 from maat import validate
 
@@ -33,8 +33,10 @@ class TestValidations(unittest.TestCase):
                 "choices": ["John Doe", "Jane Doe"],
             }   
         }
+        expected = test_input.copy()
+
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
@@ -69,8 +71,10 @@ class TestValidations(unittest.TestCase):
                 "max_amount": 150,
             }
         }
+        expected = test_input.copy()
+
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
@@ -86,8 +90,10 @@ class TestValidations(unittest.TestCase):
                 "max_amount": 5,
             }
         }
+        expected = test_input.copy()
+
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
@@ -104,8 +110,10 @@ class TestValidations(unittest.TestCase):
                 "key_regex": r"(\w+)",
             }
         }
+        expected = test_input.copy()
+
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
@@ -126,9 +134,89 @@ class TestValidations(unittest.TestCase):
             "dict  ": {"type": "dict", "min_amount": 1, "max_amount": 2, "key_regex": r"(\w+)"},
         }
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        expected = test_input.copy()
+
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
-if __name__ == '__main__':
+    def test_validations_use_default(self):
+        test_input = {}
+        test_validation = {
+            "int   ": {"type": "int", "default": 42},
+        }
+        expected = {
+            "int   ": 42,
+        }
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+    def test_validations_use_optional(self):
+        test_input = {}
+        test_validation = {
+            "float   ": {"type": "float", "optional": True},
+        }
+        expected = {}
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+    def test_validations_use_nullable(self):
+        test_input = {
+            "str   ": None
+        }
+        test_validation = {
+                "str   ": {"type": "str", "nullable": True},
+        }
+        expected = {
+            "str   ": None
+        }
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+
+    def test_validations_combined_use_nullable_optional_default(self):
+        test_input = {
+            "str   ": None
+        }
+        test_validation = {
+                "int   ": {"type": "int", "min_amount": 1, "default": 42},
+                "float ": {"type": "float", "optional": True},
+                "str   ": {"type": "str", "nullable": True},
+        }
+        expected = {
+            "int   ": 42,
+            "str   ": None
+        }
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+    def test_validations_nested(self):
+        test_input = {
+            "foo": {
+                "foo_bar": "John Doe Street",
+                "foo_baz": 123,
+            }
+        }
+        test_validation = {
+            "foo": {"type": "dict", "key_regex": r"\w+", "nested": {
+                "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+                "foo_baz": {"type": "int", "min_amount": 1},
+                }
+            }
+        }
+        expected = test_input
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
+if __name__ == "__main__":
     unittest.main()

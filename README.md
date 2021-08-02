@@ -19,30 +19,30 @@ Maat doesn't use other depenencies.
 
 ## Examples
 
-This validates that input name is of type `str` and is either 'John Doe' or 'Jane Doe'.
+This validates that input name is of type `str` and is either "John Doe" or "Jane Doe".
 Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
 
 ```python
     >>> from maat import validate
-    >>> user = {'name': 'John Doe'}
-    >>> user_validation = {'name': {'type': 'str', 'choices': ['John Doe', 'Jane Doe']}}
+    >>> user = {"name": "John Doe"}
+    >>> user_validation = {"name": {"type": "str", "choices": ["John Doe", "Jane Doe"]}}
     >>> validate(user, user_validation)
-    {'name': 'John Doe'}
+    {"name": "John Doe"}
     
-    >>> validate({'name': 'peter pan'}, user_validation)
+    >>> validate({"name": "peter pan"}, user_validation)
     Traceback (most recent call last):
-    maat.validation.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ['John Doe', 'Jane Doe']
+    maat.validation.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ["John Doe", "Jane Doe"]
     
-    >>> validate({'name': 42}, user_validation)
+    >>> validate({"name": 42}, user_validation)
     Traceback (most recent call last)
     maat.validation.Invalid: key: "name" contains invalid item "42" with type "int": not of type string
     
-    >>>  validate({'user': 'John Doe'}, user_validation)
+    >>>  validate({"user": "John Doe"}, user_validation)
     Traceback (most recent call last)
     maat.validation.Invalid: invalid keys: user :expected keys: name
     
-    >>> validate({'name': 'Jane Doe'}, user_validation)
-    {'name': 'Jane Doe'}
+    >>> validate({"name": "Jane Doe"}, user_validation)
+    {"name": "Jane Doe"}
 
     >>> import maat
     >>> @maat.protected(user_validation)
@@ -51,13 +51,14 @@ Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
 
     >>> create_user("peter pan")
     Traceback (most recent call last):
-    maat.maat.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ['John Doe', 'Jane Doe']
+    maat.maat.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ["John Doe", "Jane Doe"]
 
     >>> create_user("John Doe")
-    'success'
+    "success"
 ```
 
 ## Starting Point Example
+
 ```python
 validation = {
     "int   ": {"type": "int", "cast": True, "min_amount": 1, "max_amount": 150},
@@ -68,6 +69,40 @@ validation = {
         "max_length": 12, "regex": r"(\w+ )(\w+)", "choices": ["John Doe", "Jane Doe"]
     }
 }
+```
+
+Each field could be nullable, optional, default; they can be added to any field.
+```python
+>>> input_dic = {"int   ": None}
+>>> validation = {
+	"int   ": {"type": "int", "min_amount": 1, "default": 42},
+	"float ": {"type": "float", "optional": True},
+	"str   ": {"type": "str", "nullable": True},
+}
+>>> validate(input_dic, validation)
+{
+    "int   ": 42,
+    "str   ": None
+}
+```
+
+Nested data structures, nested fields are treated the same as upper levels.
+It's possible to nest thousand of levels, it can be increased by upping recursion level of python.
+Nesting is done without any performance hit.
+```python
+        input_dic = {
+            "foo": {
+                "foo_bar": "John Doe Street",
+                "foo_baz": 123,
+            }
+        }
+        validation = {
+            "foo": {"type": "dict", "key_regex": r"\w+", "nested": {
+                "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+                "foo_baz": {"type": "int", "min_amount": 1},
+                }
+            }
+        }
 ```
 
 ## Installation
