@@ -86,7 +86,9 @@ Each field could be nullable, optional, default; they can be added to any field.
 }
 ```
 
-Nested data structures
+Nested data structures, nested fields are treated the same as upper levels.
+It's possible to nest thousand of levels, it can be increased by upping recursion level of python.
+Nesting is done without any performance hit.
 ```python
         input_dic = {
             "foo": {
