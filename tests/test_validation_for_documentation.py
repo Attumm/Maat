@@ -33,8 +33,10 @@ class TestValidations(unittest.TestCase):
                 "choices": ["John Doe", "Jane Doe"],
             }   
         }
+        expected = test_input.copy()
+
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
@@ -69,8 +71,10 @@ class TestValidations(unittest.TestCase):
                 "max_amount": 150,
             }
         }
+        expected = test_input.copy()
+
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
@@ -86,8 +90,10 @@ class TestValidations(unittest.TestCase):
                 "max_amount": 5,
             }
         }
+        expected = test_input.copy()
+
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
@@ -104,8 +110,10 @@ class TestValidations(unittest.TestCase):
                 "key_regex": r"(\w+)",
             }
         }
+        expected = test_input.copy()
+
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
@@ -126,7 +134,9 @@ class TestValidations(unittest.TestCase):
             "dict  ": {"type": "dict", "min_amount": 1, "max_amount": 2, "key_regex": r"(\w+)"},
         }
         validated_items = validate(test_input, test_validation)
-        difference = ddiff(validated_items, test_input)
+        expected = test_input.copy()
+
+        difference = ddiff(validated_items, expected)
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
