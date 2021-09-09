@@ -107,6 +107,25 @@ Nesting is done without any performance hit.
 }
 ```
 
+### Nesting of Dicts
+```python
+
+        test_input = {
+            'foobar': [
+                {'name': 'John Doe', 'points': 22},
+                {'name': 'Jane Doe', 'points': 23},
+                {'name': 'willo wanka', 'points': 42},
+            ]
+        }
+        test_validation = {
+            'foobar': {'type': 'list_dicts',  'nested': {
+                    'name': {'type': 'str'},
+                    'points': {'type': 'int'},
+                }
+            }
+        }
+```
+
 ## Installation
 ```sh
 pip install maat

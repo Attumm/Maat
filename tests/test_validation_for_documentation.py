@@ -218,5 +218,26 @@ class TestValidations(unittest.TestCase):
         # if the differ finds no difference a empty dictionary is returned
         self.assertEqual(difference, {})
 
+    def test_validate_nested_list_dict_nested(self):
+        test_input = {
+            'foobar': [
+                {'name': 'John Doe', 'points': 22},
+                {'name': 'Jane Doe', 'points': 23},
+                {'name': 'willo wanka', 'points': 42},
+            ]
+        }
+        test_validation = {
+            'foobar': {'type': 'list_dicts',  'nested': {
+                    'name': {'type': 'str'},
+                    'points': {'type': 'int'},
+                }
+            }
+        }
+        expected = test_input
+        validated_items = validate(test_input, test_validation)
+        difference = ddiff(validated_items, expected)
+        # if the differ finds no difference a empty dictionary is returned
+        self.assertEqual(difference, {})
+
 if __name__ == "__main__":
     unittest.main()
