@@ -1,0 +1,16 @@
+# no versions since benchmarks should always run with the most recent version of each package
+devtools==0.6.1
+
+pydantic
+python-dateutil
+trafaret
+django
+djangorestframework
+marshmallow
+valideer
+attr
+cattrs
+cerberus
+voluptuous
+schematics
+maat

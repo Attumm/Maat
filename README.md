@@ -136,3 +136,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Note
 This project is being used in production by multiple companies.
+
+
+## Benchmark
+
+Benchmark open-sourced from [Pydantic](https://github.com/samuelcolvin/pydantic/tree/master/benchmarks)
+
+Package | Version | Relative Performance | Mean validation time
+--- | --- | --- | ---
+maat | `3.0.4` |  | 15.8μs
+attrs + cattrs | `21.2.0` | 2.4x slower | 37.6μs
+pydantic | `1.8.2` | 2.5x slower | 39.7μs
+voluptuous | `0.12.1` | 6.2x slower | 98.6μs
+marshmallow | `3.13.0` | 7.2x slower | 114.1μs
+trafaret | `2.1.0` | 7.5x slower | 118.5μs
+schematics | `2.1.1` | 26.6x slower | 420.9μs
+django-rest-framework | `3.12.4` | 30.4x slower | 482.2μs
+cerberus | `1.3.4` | 55.6x slower | 880.2μs
