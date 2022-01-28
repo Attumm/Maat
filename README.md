@@ -125,6 +125,38 @@ Nesting is done without any performance hit.
 }
 ```
 
+
+## Extending Maat with custom validation
+```python
+>>> from maat import types
+
+
+>>> def datetime_parse(val, key, formats="%Y-%m-%dT%H:%M:%S.%f", *args, **kwargs):
+    """ uses to parse iso format 'formats': '%Y-%m-%dT%H:%M:%S.%f'"""
+    try:
+        return datetime.strptime(val, formats)
+    except Exception as e:
+        raise Invalid(f'key: "{key}" contains invalid item')
+
+>>> types['custom_datetime'] = datetime_parse
+
+>>> input = {
+    "created": "2022-01-28T15:01:46.0000",
+}
+
+
+>>> validation = {
+    "created": {
+        "type": "custom_datetime",
+    }   
+}
+
+>>> validate(input, validation)
+{'created': datetime.datetime(2022, 1, 28, 15, 1, 46)}
+
+```
+
+
 ## Installation
 ```sh
 pip install maat
