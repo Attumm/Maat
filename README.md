@@ -172,7 +172,7 @@ This project is being used in production by multiple companies.
 
 ## Benchmark
 
-Benchmark open-sourced from [Pydantic](https://github.com/samuelcolvin/pydantic/tree/master/benchmarks)
+Benchmark open-sourced from [Pydantic](https://github.com/pydantic/pydantic/tree/7f90b2f342ba338957bb8dfff3ead760edcdd9bf/benchmarks)
 
 Package | Version | Relative Performance | Mean validation time
 --- | --- | --- | ---
