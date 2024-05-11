@@ -131,7 +131,7 @@ Below is an example showcasing nesting. For example with very deep nesting [here
 
 ### Extending Maat with custom validation
 Maat's flexibility facilitates the creation of custom validation functions tailored to specific needs. The library can be extended with new data types and validation rules according to the project requirements. In the following example, a custom validation function is implemented and integrated for datetime strings in Maat.
-Additionally, creating specific types for business logic, such as "valid_address," is also possible. For a relevant example, refer to (here)[tests/tests.py#L714].
+Additionally, creating specific types for business logic, such as "valid_address," is also possible. For a relevant example, refer to [here](tests/tests.py#L714).
 ```python
 >>> from maat import types
 
