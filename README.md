@@ -34,6 +34,7 @@ validation = {
 
 ## Examples
 Maat is designed with intuitiveness and simplicity in mind, making it accessible for developers who are familiar with dictionaries. The structure of Maat's validation schema corresponds closely to the data being validated, contributing to the ease of understanding and reducing the learning curve. This example demonstrates the intuitive nature of Maat's validation schema:
+
 This example validates that the name in the input dictionary is of type str and is either "John Doe" or "Jane Doe". Maat throws an Invalid exception when validation fails due to its fail-fast policy.
 
 ```python
@@ -61,14 +62,14 @@ This example validates that the name in the input dictionary is of type str and 
     >>> import maat
     >>> @maat.protected(user_validation)
         def create_user(name):
-            return "success"
+            return f"created user {name}"
 
     >>> create_user("peter pan")
     Traceback (most recent call last):
     maat.maat.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ["John Doe", "Jane Doe"]
 
     >>> create_user("John Doe")
-    "success"
+    "created user John Doe"
 ```
 
 ## Starting Point Example
