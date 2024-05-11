@@ -4,7 +4,13 @@ cryptography==42.0.7
 deepdiff==7.0.1
 hypothesis==6.100.6
 install==1.3.5
+mccabe==0.7.0
 ordered-set==4.1.0
+pycodestyle==2.11.1
 pycparser==2.22
 pycryptodome==3.20.0
+pydocstyle==6.3.0
+pyflakes==3.2.0
+pylama==8.4.1
+snowballstemmer==2.2.0
 sortedcontainers==2.4.0
