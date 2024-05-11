@@ -116,7 +116,8 @@ Nesting is done without any performance hit.
     ]
 }
 >>> validation = {
-    'foobar': {'type': 'list_dicts',
+    'foobar': {
+        'type': 'list_dicts',
         'nested': {
 	        'name': {'type': 'str'},
 	        'points': {'type': 'int'},
