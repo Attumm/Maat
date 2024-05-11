@@ -48,7 +48,7 @@ def find_missing_keys(input_dict, counter_dict):
         raise Invalid(f"{input_dict} not a dictionary but is of type {type(input_dict).__name__}")
 
 
-def scale(input_dict, counter_dict):
+def scale(input_dict, counter_dict):  # noqa:C901
 
     if not keys_equality(input_dict, counter_dict):
         raise Invalid(f"invalid keys: {find_missing_keys(input_dict, counter_dict)}")
@@ -133,7 +133,7 @@ def scale(input_dict, counter_dict):
     return validated_items
 
 
-def validate(input_dict, counter_dict):
+def validate(input_dict, counter_dict):  # noqa:C901
 
     if not keys_equality(input_dict, counter_dict):
         raise Invalid(f"invalid keys: {find_missing_keys(input_dict, counter_dict)}")

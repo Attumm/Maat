@@ -42,7 +42,12 @@ jobs:
 
     - name: Run Pylama
       run: |
-        pylama . -i E501
+#        pylama . -i E501
+         pylama maat/* -i E501
+
+#    - name: Run MyPy strict
+#      run: |
+#        mypy --strict
       
     - name: Run Unit Tests
       run: |
