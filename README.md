@@ -7,10 +7,12 @@
 Maat is an extensible transformation and validation library for Python, designed with simplicity and readability in mind, capable of handling corner cases, nested data, and encrypted data with remarkable speed. The project is named after the ancient Egyptian god [Maat](https://en.wikipedia.org/wiki/Maat), who used a magical scale to weigh the heart as described in the Book of the Dead.
 Similar to Maat's scale, this library offers dictionary-to-dictionary validation and transformation, as well as serialization by leveraging the validation schema. A new dictionary is created from two dictionaries, with each value in the dictionary to be validated passed through their respective validation and transformation functions. Maat accomplishes this without relying on external dependencies.
 Utilizing Maat offers several notable features:
+
 * Simplicity and Intuitiveness: Maat's validation schema is straightforward and easy to understand, promoting maintainability and ease of use.
 * Encryption and Decryption: Maat supports validation on encrypted data, helping to maintain data privacy and adhere to data protection regulations.
 * Deep Nesting: The library proficiently manages nested data structures, ensuring efficient validation for complex data requirements.
 * Performance: Pydantic's benchmarks indicate Maat as the top-performing library among popular validation libraries.
+
 Maat's combination of capabilities, including encryption and decryption, nesting, and exceptional performance, makes it a fitting choice for projects requiring a versatile data validation and transformation solution.
 The simplicity and readability of Maat's validation schema contribute to the stability of its implementations in projects. New developers can quickly understand and work with the validation schema, making it an ideal choice for projects that value maintainability and ease of collaboration.
 
