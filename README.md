@@ -162,6 +162,102 @@ Additionally, creating specific types for business logic, such as "valid_address
 ```
 
 
+### Secure Validation with Encryption and Decryption
+
+Maat enables secure validation on encrypted data, ensuring both data privacy and flexibility in the validation process. This powerful feature allows you to maintain encrypted data throughout the validation process by decrypting it only for validation purposes and re-encrypting it afterward.
+##### Integration and Usage
+
+The code snippet below illustrates the integration of encryption and decryption functions into Maat, using custom functions for encoding and decoding. These custom functions utilize AES encryption. For more information, refer to here.
+Following the integration, a series of tests demonstrate the usage of Maat to validate and transform incoming data, as well as securely validate pre-encrypted data.
+
+
+```python
+def encode(msg_text):
+    """
+    Encrypts a message using AES ECB mode with right-justified padding and encodes the result in base64.
+
+    Args:
+        msg_text (str): The plaintext message to be encrypted.
+
+    Returns:
+        str: The base64-encoded encrypted message.
+    """
+    secret_key = os.environ.get('secret', 'veryMuchSecret').encode('utf-8')
+    msg_text_bytes = msg_text.rjust(32).encode('utf-8')
+    cipher = AES.new(secret_key, AES.MODE_ECB)
+    encrypted_bytes = cipher.encrypt(msg_text_bytes)
+
+    return base64.b64encode(encrypted_bytes).decode('utf-8')
+
+
+def decode(encoded):
+    """
+    Decrypts a base64-encoded message encrypted using AES ECB mode and removes leading spaces.
+
+    Args:
+        encoded (str): The base64-encoded encrypted message.
+
+    Returns:
+        str: The decrypted message with leading spaces removed.
+    """
+    secret_key = os.environ.get('secret', 'veryMuchSecret').encode('utf-8')
+
+    cipher = AES.new(secret_key, AES.MODE_ECB)
+    encrypted_bytes = base64.b64decode(encoded)
+    decrypted_bytes = cipher.decrypt(encrypted_bytes)
+    decrypted_text = decrypted_bytes.decode('utf-8')
+
+    return decrypted_text.lstrip()
+
+
+import maat
+
+os.environ['secret'] = 'super super secret key'.rjust(32)
+maat.registered_transformation['encode'] = encode
+maat.registered_transformation['decode'] = decode
+
+# Example encode 
+test_input = {
+    'name': 'John Doe',
+    'address': 'John Doe Street',
+}
+counter_dict = {
+    'name': {
+        'type': 'str', 'regex': 'John Doe', 'transform': 'encode'
+    },
+    'address': {
+        'type': 'str', 'regex': 'John Doe Street', 'transform': 'encode'
+    },
+}
+
+validated_items = maat.scale(test_input, counter_dict)
+
+
+# Example validation on encrypted data
+test_input = {
+    'name': 'LcyInWDZsUv22ocRHM3+yg7QO9ArjlhP2R9v5CSZIRc=',
+    'address': 'LcyInWDZsUv22ocRHM3+yryn2OYg2jesvpgClxA/sdQ=',
+}
+
+counter_dict = {
+    'name': {
+        'type': 'str', 'regex': 'John Doe',
+        'pre_transform': 'decode', 'transform': 'encode'
+    },
+    'address': {
+        'type': 'str', 'regex': 'John Doe Street',
+        'pre_transform': 'decode', 'transform': 'encode'
+    },
+}
+validated_items = maat.scale(test_input, counter_dict)
+```
+
+
+#### Benefits
+
+This approach enables validation of encrypted data while keeping it encrypted, or performing validation and serialization on encrypted data, thereby ensuring data confidentiality and adherence to data protection regulations.
+
+
 ## Installation
 ```sh
 pip install maat
