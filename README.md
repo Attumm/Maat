@@ -88,7 +88,7 @@ For lists it's possible to skip failed items with skip_failed.
 ```
 #### Nesting
 Nesting data structures and fields are treated as first-class citizens, allowing for seamless validation and ensuring code correctness at any level. Maat efficiently handles nesting, with minimal performance impact, and supports a vast number of nesting levels. The limit is set by Python's recursion depth, which defaults to 1k. To increase the maximum nesting depth, you can adjust Python's recursion limit via sys.setrecursionlimit().
-Below is an example showcasing nesting. For example with very deep nesting [here](maat/tests/test_corner_case.py)
+Below is an example showcasing nesting. For example with very deep nesting [here](tests/test_corner_case.py)
 ```python
 >>> input_dic = {
     "foo": {
@@ -131,7 +131,7 @@ Below is an example showcasing nesting. For example with very deep nesting [here
 
 ### Extending Maat with custom validation
 Maat's flexibility facilitates the creation of custom validation functions tailored to specific needs. The library can be extended with new data types and validation rules according to the project requirements. In the following example, a custom validation function is implemented and integrated for datetime strings in Maat.
-Additionally, creating specific types for business logic, such as "valid_address," is also possible. For a relevant example, refer to (here)[maat/tests/tests.py#L714].
+Additionally, creating specific types for business logic, such as "valid_address," is also possible. For a relevant example, refer to (here)[tests/tests.py#L714].
 ```python
 >>> from maat import types
 
