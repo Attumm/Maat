@@ -1,10 +1,14 @@
-coverage>=5*
-deepdiff>=5
-hypothesis>=4
+attrs==23.2.0
+cffi==1.16.0
+coverage==7.5.1
+cryptography==42.0.7
+deepdiff==6.7.1
+hypothesis==6.100.6
 jsonpickle==2.0.0
 ordered-set==4.0.2
 packaging==20.9
 pep517==0.10.0
+pycparser==2.22
 pycrypto==2.6.1
 pyparsing==2.4.7
 sortedcontainers==2.4.0
