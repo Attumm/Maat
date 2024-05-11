@@ -1,4 +1,4 @@
-from .maat import scale, validate
+from .maat import scale, validate # noqa
 from .exceptions import Invalid
 
 from .validations import types

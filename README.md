@@ -1,6 +1,5 @@
 # Maat
-[![Build Status](https://travis-ci.com/Attumm/Maat.svg?branch=main)](https://travis-ci.com/Attumm/Maat)
-[![Coverage Status](https://coveralls.io/repos/github/Attumm/Maat/badge.svg)](https://coveralls.io/github/Attumm/Maat)
+[![CI](https://github.com/Attumm/Maat/actions/workflows/ci.yml/badge.svg)](https://github.com/Attumm/Maat/actions/workflows/ci.yml)
 [![Downloads](https://static.pepy.tech/badge/maat/month)](https://pepy.tech/project/maat)
 
 Maat is an easily extensible transformation and validation library for Python.
@@ -111,16 +110,18 @@ Nesting is done without any performance hit.
 ```python
 >>> input = {
     'foobar': [
-	{'name': 'John Doe', 'points': 22},
-	{'name': 'Jane Doe', 'points': 23},
-	{'name': 'willo wanka', 'points': 42},
+        {'name': 'John Doe', 'points': 22},
+        {'name': 'Jane Doe', 'points': 23},
+        {'name': 'willo wanka', 'points': 42},
     ]
 }
 >>> validation = {
-    'foobar': {'type': 'list_dicts',  'nested': {
-	    'name': {'type': 'str'},
-	    'points': {'type': 'int'},
-	}
+    'foobar': {
+        'type': 'list_dicts',
+        'nested': {
+	        'name': {'type': 'str'},
+	        'points': {'type': 'int'},
+	    }
     }
 }
 ```
