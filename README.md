@@ -2,21 +2,21 @@
 [![CI](https://github.com/Attumm/Maat/actions/workflows/ci.yml/badge.svg)](https://github.com/Attumm/Maat/actions/workflows/ci.yml)
 [![Downloads](https://static.pepy.tech/badge/maat/month)](https://pepy.tech/project/maat)
 
-Maat is an easily extensible transformation and validation library for Python.
-Built for corner cases and speed.
+Maat is an extensible transformation and validation library for Python, designed to handle corner cases efficiently and with remarkable speed. The project is named after the ancient Egyptian god [Maat](https://en.wikipedia.org/wiki/Maat)., who used a magical scale to weigh the heart, as described in the Book of the Dead.
+Similar to Maat's scale, this library offers dictionary-to-dictionary validation and transformation, as well as serializing data by leveraging the validation schema. A new dictionary is created from two dictionaries, with each value in the dictionary to be validated passed through their respective validation and transformation functions. Maat accomplishes this without relying on external dependencies.
+Utilizing Maat offers several notable features:
+* Simplicity
+* Encryption and Decryption: Maat supports validation on encrypted data, helping to maintain data privacy and adhere to data protection regulations.
+* Deep Nesting: The library proficiently manages nested data structures, ensuring efficient validation for complex data requirements.
+* Exceptional Performance: Pydantic's benchmarks show Maat the fasted
+Maat's combination of capabilities, including encryption and decryption, nesting, and outstanding performance, makes it a fitting choice for projects that require a versatile data validation and transformation solution.
 
-The project is named after the ancient Egyptian god [Maat](https://en.wikipedia.org/wiki/Maat).
-Her scale was used to weigh the heart as described in the book of the dead.
-
-Since Maats scale is magical, it not only validates values, it can transform them too.
-
-Maat does dictionary-to-dictionary validation and transformation.
-From those two dictionaries a new dictionary is created.
-Each value of the dictionary to be validated is passed through their validation and transformation functions.
-
-Maat doesn't use other depenencies.
+The simplicity and readability of Maat's validation schema contribute to the stability of its implementations in projects. New developers can understand and work with the validation schema quickly, making it an ideal choice for projects that value maintainability and ease of use.
 
 ## Examples
+Maat is designed with intuitiveness and simplicity in mind, making it accessible for developers who are familiar with dictionaries. The structure of Maat's validation schema cis schema  of the data being validated, contributing to the ease of understanding and reducing the learning curve.
+This example demonstrates the intuitive nature of Maat's validation schema:
+
 
 This validates that input name is of type `str` and is either "John Doe" or "Jane Doe".
 Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
