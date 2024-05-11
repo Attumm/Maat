@@ -2,24 +2,36 @@
 [![CI](https://github.com/Attumm/Maat/actions/workflows/ci.yml/badge.svg)](https://github.com/Attumm/Maat/actions/workflows/ci.yml)
 [![Downloads](https://static.pepy.tech/badge/maat/month)](https://pepy.tech/project/maat)
 
-Maat is an easily extensible transformation and validation library for Python.
-Built for corner cases and speed.
 
-The project is named after the ancient Egyptian god [Maat](https://en.wikipedia.org/wiki/Maat).
-Her scale was used to weigh the heart as described in the book of the dead.
 
-Since Maats scale is magical, it not only validates values, it can transform them too.
+Maat is an extensible transformation and validation library for Python, designed with simplicity and readability in mind, capable of handling corner cases, nested data, and encrypted data with remarkable speed. The project is named after the ancient Egyptian god [Maat](https://en.wikipedia.org/wiki/Maat), who used a magical scale to weigh the heart as described in the Book of the Dead.
+Similar to Maat's scale, this library offers dictionary-to-dictionary validation and transformation, as well as serialization by leveraging the validation schema. A new dictionary is created from two dictionaries, with each value in the dictionary to be validated passed through their respective validation and transformation functions. Maat accomplishes this without relying on external dependencies.
+Utilizing Maat offers several notable features:
 
-Maat does dictionary-to-dictionary validation and transformation.
-From those two dictionaries a new dictionary is created.
-Each value of the dictionary to be validated is passed through their validation and transformation functions.
+* Simplicity and Intuitiveness: Maat's validation schema is straightforward and easy to understand, promoting maintainability and ease of use.
+* Encryption and Decryption: Maat supports validation on encrypted data, helping to maintain data privacy and adhere to data protection regulations.
+* Deep Nesting: The library proficiently manages nested data structures, ensuring efficient validation for complex data requirements.
+* Performance: Pydantic's benchmarks indicate Maat as the top-performing library among popular validation libraries.
 
-Maat doesn't use other depenencies.
+Maat's combination of capabilities, including encryption and decryption, nesting, and exceptional performance, makes it a fitting choice for projects requiring a versatile data validation and transformation solution.
+The simplicity and readability of Maat's validation schema contribute to the stability of its implementations in projects. New developers can quickly understand and work with the validation schema, making it an ideal choice for projects that value maintainability and ease of collaboration.
+
+
+```python
+input_dic = {
+    "foo_baz": 123,
+    "foo_bar": "John Doe Street",
+}
+
+validation = {
+    "foo_baz": {"type": "int", "min_amount": 1},
+    "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+}
+```
 
 ## Examples
-
-This validates that input name is of type `str` and is either "John Doe" or "Jane Doe".
-Throws `Invalid` exception when validation fails. Maat has a fail fast policy.
+Maat is designed with intuitiveness and simplicity in mind, making it accessible for developers who are familiar with dictionaries. The structure of Maat's validation schema corresponds closely to the data being validated, contributing to the ease of understanding and reducing the learning curve. This example demonstrates the intuitive nature of Maat's validation schema:
+This example validates that the name in the input dictionary is of type str and is either "John Doe" or "Jane Doe". Maat throws an Invalid exception when validation fails due to its fail-fast policy.
 
 ```python
     >>> from maat import validate
@@ -87,21 +99,23 @@ For lists it's possible to skip failed items with skip_failed.
 }
 ```
 #### Nesting
-Nested data structures, nested fields are treated the same as upper levels.
-It's possible to nest thousand of levels, it can be increased by upping recursion level of python.
-Nesting is done without any performance hit.
+Nesting data structures and fields are treated as first-class citizens, allowing for seamless validation and ensuring code correctness at any level. Maat efficiently handles nesting, with minimal performance impact, and supports a vast number of nesting levels. The limit is set by Python's recursion depth, which defaults to 1k. To increase the maximum nesting depth, you can adjust Python's recursion limit via sys.setrecursionlimit().
+Below is an example showcasing nesting. For example with very deep nesting [here](tests/test_corner_case.py)
 ```python
 >>> input_dic = {
     "foo": {
-	"foo_bar": "John Doe Street",
-	"foo_baz": 123,
+        "foo_bar": "John Doe Street",
+        "foo_baz": 123,
     }
 }
 >>> validation = {
-    "foo": {"type": "dict", "key_regex": r"\w+", "nested": {
-	"foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
-	"foo_baz": {"type": "int", "min_amount": 1},
-	}
+    "foo": {
+        "type": "dict",
+        "key_regex": r"\w+",
+        "nested": {
+            "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+            "foo_baz": {"type": "int", "min_amount": 1},
+        }
     }
 }
 ```
@@ -119,21 +133,23 @@ Nesting is done without any performance hit.
     'foobar': {
         'type': 'list_dicts',
         'nested': {
-	        'name': {'type': 'str'},
-	        'points': {'type': 'int'},
-	    }
+            'name': {'type': 'str'},
+            'points': {'type': 'int'},
+        }
     }
 }
 ```
 
 
-## Extending Maat with custom validation
+### Extending Maat with custom validation
+Maat's flexibility facilitates the creation of custom validation functions tailored to specific needs. The library can be extended with new data types and validation rules according to the project requirements. In the following example, a custom validation function is implemented and integrated for datetime strings in Maat.
+Additionally, creating specific types for business logic, such as "valid_address," is also possible. For a relevant example, refer to [here](tests/tests.py#L714).
 ```python
 >>> from maat import types
 
 
 >>> def datetime_parse(val, key, formats="%Y-%m-%dT%H:%M:%S.%f", *args, **kwargs):
-    """ uses to parse iso format 'formats': '%Y-%m-%dT%H:%M:%S.%f'"""
+    """Parse datetime string 'val' in ISO format and return a datetime object, raise Invalid exception on error."""
     try:
         return datetime.strptime(val, formats)
     except Exception as e:
@@ -156,6 +172,102 @@ Nesting is done without any performance hit.
 {'created': datetime.datetime(2022, 1, 28, 15, 1, 46)}
 
 ```
+
+
+### Secure Validation with Encryption and Decryption
+
+Maat enables secure validation on encrypted data, ensuring both data privacy and flexibility in the validation process. This powerful feature allows you to maintain encrypted data throughout the validation process by decrypting it only for validation purposes and re-encrypting it afterward.
+##### Integration and Usage
+
+The code snippet below illustrates the integration of encryption and decryption functions into Maat, using custom functions for encoding and decoding. These custom functions utilize AES encryption. For more information, refer to here.
+Following the integration, a series of tests demonstrate the usage of Maat to validate and transform incoming data, as well as securely validate pre-encrypted data.
+
+
+```python
+def encode(msg_text):
+    """
+    Encrypts a message using AES ECB mode with right-justified padding and encodes the result in base64.
+
+    Args:
+        msg_text (str): The plaintext message to be encrypted.
+
+    Returns:
+        str: The base64-encoded encrypted message.
+    """
+    secret_key = os.environ.get('secret', 'veryMuchSecret').encode('utf-8')
+    msg_text_bytes = msg_text.rjust(32).encode('utf-8')
+    cipher = AES.new(secret_key, AES.MODE_ECB)
+    encrypted_bytes = cipher.encrypt(msg_text_bytes)
+
+    return base64.b64encode(encrypted_bytes).decode('utf-8')
+
+
+def decode(encoded):
+    """
+    Decrypts a base64-encoded message encrypted using AES ECB mode and removes leading spaces.
+
+    Args:
+        encoded (str): The base64-encoded encrypted message.
+
+    Returns:
+        str: The decrypted message with leading spaces removed.
+    """
+    secret_key = os.environ.get('secret', 'veryMuchSecret').encode('utf-8')
+
+    cipher = AES.new(secret_key, AES.MODE_ECB)
+    encrypted_bytes = base64.b64decode(encoded)
+    decrypted_bytes = cipher.decrypt(encrypted_bytes)
+    decrypted_text = decrypted_bytes.decode('utf-8')
+
+    return decrypted_text.lstrip()
+
+
+import maat
+
+os.environ['secret'] = 'super super secret key'.rjust(32)
+maat.registered_transformation['encode'] = encode
+maat.registered_transformation['decode'] = decode
+
+# Example encode 
+test_input = {
+    'name': 'John Doe',
+    'address': 'John Doe Street',
+}
+counter_dict = {
+    'name': {
+        'type': 'str', 'regex': 'John Doe', 'transform': 'encode'
+    },
+    'address': {
+        'type': 'str', 'regex': 'John Doe Street', 'transform': 'encode'
+    },
+}
+
+validated_items = maat.scale(test_input, counter_dict)
+
+
+# Example validation on encrypted data
+test_input = {
+    'name': 'LcyInWDZsUv22ocRHM3+yg7QO9ArjlhP2R9v5CSZIRc=',
+    'address': 'LcyInWDZsUv22ocRHM3+yryn2OYg2jesvpgClxA/sdQ=',
+}
+
+counter_dict = {
+    'name': {
+        'type': 'str', 'regex': 'John Doe',
+        'pre_transform': 'decode', 'transform': 'encode'
+    },
+    'address': {
+        'type': 'str', 'regex': 'John Doe Street',
+        'pre_transform': 'decode', 'transform': 'encode'
+    },
+}
+validated_items = maat.scale(test_input, counter_dict)
+```
+
+
+#### Benefits
+
+This approach enables validation of encrypted data while keeping it encrypted, or performing validation and serialization on encrypted data, thereby ensuring data confidentiality and adherence to data protection regulations.
 
 
 ## Installation
