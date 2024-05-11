@@ -8,7 +8,7 @@ Maat is an extensible transformation and validation library for Python, designed
 
 Similar to Maat's scale, this library offers dictionary-to-dictionary validation and transformation, as well as serialization by leveraging the validation schema. A new dictionary is created from two dictionaries, with each value in the dictionary to be validated passed through their respective validation and transformation functions. Maat accomplishes this without relying on external dependencies.
 
-Maat offers several notable features:
+Maat key features:
 
 * Simplicity and Intuitiveness: Maat's validation schema is straightforward and easy to understand, promoting maintainability and ease of use.
 * Encryption and Decryption: Maat supports validation on encrypted data, helping to maintain data privacy and adhere to data protection regulations.
