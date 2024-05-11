@@ -20,7 +20,8 @@ from maat.exceptions import Invalid
 
 
 def datetime_parse(val, key, formats="%Y-%m-%dT%H:%M:%S.%f", *args, **kwargs):
-    """ uses to parse iso format 'formats': '%Y-%m-%dT%H:%M:%S.%f'"""
+    """Parse datetime string 'val' in ISO format and return a datetime object,
+    raise Invalid exception on error."""
     try:
         return datetime.strptime(val, formats)
     except Exception as e:

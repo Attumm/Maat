@@ -87,21 +87,23 @@ For lists it's possible to skip failed items with skip_failed.
 }
 ```
 #### Nesting
-Nested data structures, nested fields are treated the same as upper levels.
-It's possible to nest thousand of levels, it can be increased by upping recursion level of python.
-Nesting is done without any performance hit.
+Nesting data structures and fields are treated as first-class citizens, allowing for seamless validation and ensuring code correctness at any level. Maat efficiently handles nesting, with minimal performance impact, and supports a vast number of nesting levels. The limit is set by Python's recursion depth, which defaults to 1k. To increase the maximum nesting depth, you can adjust Python's recursion limit via sys.setrecursionlimit().
+Below is an example showcasing nesting. For example with very deep nesting [here](maat/tests/test_corner_case.py)
 ```python
 >>> input_dic = {
     "foo": {
-	"foo_bar": "John Doe Street",
-	"foo_baz": 123,
+        "foo_bar": "John Doe Street",
+        "foo_baz": 123,
     }
 }
 >>> validation = {
-    "foo": {"type": "dict", "key_regex": r"\w+", "nested": {
-	"foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
-	"foo_baz": {"type": "int", "min_amount": 1},
-	}
+    "foo": {
+        "type": "dict",
+        "key_regex": r"\w+",
+        "nested": {
+            "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+            "foo_baz": {"type": "int", "min_amount": 1},
+        }
     }
 }
 ```
@@ -119,21 +121,23 @@ Nesting is done without any performance hit.
     'foobar': {
         'type': 'list_dicts',
         'nested': {
-	        'name': {'type': 'str'},
-	        'points': {'type': 'int'},
-	    }
+            'name': {'type': 'str'},
+            'points': {'type': 'int'},
+        }
     }
 }
 ```
 
 
-## Extending Maat with custom validation
+### Extending Maat with custom validation
+Maat's flexibility facilitates the creation of custom validation functions tailored to specific needs. The library can be extended with new data types and validation rules according to the project requirements. In the following example, a custom validation function is implemented and integrated for datetime strings in Maat.
+Additionally, creating specific types for business logic, such as "valid_address," is also possible. For a relevant example, refer to (here)[maat/tests/tests.py#L714].
 ```python
 >>> from maat import types
 
 
 >>> def datetime_parse(val, key, formats="%Y-%m-%dT%H:%M:%S.%f", *args, **kwargs):
-    """ uses to parse iso format 'formats': '%Y-%m-%dT%H:%M:%S.%f'"""
+    """Parse datetime string 'val' in ISO format and return a datetime object, raise Invalid exception on error."""
     try:
         return datetime.strptime(val, formats)
     except Exception as e:
