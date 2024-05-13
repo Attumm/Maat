@@ -5,8 +5,10 @@
 
 
 Maat is an extensible transformation and validation library for Python, designed with simplicity and readability in mind, capable of handling corner cases, nested data, and encrypted data with remarkable speed. The project is named after the ancient Egyptian god [Maat](https://en.wikipedia.org/wiki/Maat), who used a magical scale to weigh the heart as described in the Book of the Dead.
+
 Similar to Maat's scale, this library offers dictionary-to-dictionary validation and transformation, as well as serialization by leveraging the validation schema. A new dictionary is created from two dictionaries, with each value in the dictionary to be validated passed through their respective validation and transformation functions. Maat accomplishes this without relying on external dependencies.
-Utilizing Maat offers several notable features:
+
+Maat key features:
 
 * Simplicity and Intuitiveness: Maat's validation schema is straightforward and easy to understand, promoting maintainability and ease of use.
 * Encryption and Decryption: Maat supports validation on encrypted data, helping to maintain data privacy and adhere to data protection regulations.
@@ -14,23 +16,25 @@ Utilizing Maat offers several notable features:
 * Performance: Pydantic's benchmarks indicate Maat as the top-performing library among popular validation libraries.
 
 Maat's combination of capabilities, including encryption and decryption, nesting, and exceptional performance, makes it a fitting choice for projects requiring a versatile data validation and transformation solution.
+
 The simplicity and readability of Maat's validation schema contribute to the stability of its implementations in projects. New developers can quickly understand and work with the validation schema, making it an ideal choice for projects that value maintainability and ease of collaboration.
 
 
 ```python
 input_dic = {
-    "foo_baz": 123,
-    "foo_bar": "John Doe Street",
+    "number": 123,
+    "street": "John Doe Street",
 }
 
 validation = {
-    "foo_baz": {"type": "int", "min_amount": 1},
-    "foo_bar": {"type": "str", "min_length": 5, "max_length": 99},
+    "number": {"type": "int", "min_amount": 1},
+    "street": {"type": "str", "min_length": 5, "max_length": 99},
 }
 ```
 
 ## Examples
 Maat is designed with intuitiveness and simplicity in mind, making it accessible for developers who are familiar with dictionaries. The structure of Maat's validation schema corresponds closely to the data being validated, contributing to the ease of understanding and reducing the learning curve. This example demonstrates the intuitive nature of Maat's validation schema:
+
 This example validates that the name in the input dictionary is of type str and is either "John Doe" or "Jane Doe". Maat throws an Invalid exception when validation fails due to its fail-fast policy.
 
 ```python
@@ -58,14 +62,14 @@ This example validates that the name in the input dictionary is of type str and 
     >>> import maat
     >>> @maat.protected(user_validation)
         def create_user(name):
-            return "success"
+            return f"created user {name}"
 
     >>> create_user("peter pan")
     Traceback (most recent call last):
     maat.maat.Invalid: key: "name" contains invalid item "peter pan": not in valid choices ["John Doe", "Jane Doe"]
 
     >>> create_user("John Doe")
-    "success"
+    "created user John Doe"
 ```
 
 ## Starting Point Example
