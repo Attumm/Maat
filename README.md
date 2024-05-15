@@ -1,5 +1,6 @@
 # Maat
 [![CI](https://github.com/Attumm/Maat/actions/workflows/ci.yml/badge.svg)](https://github.com/Attumm/Maat/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Attumm/Maat/graph/badge.svg?token=CORUIP41EU)](https://codecov.io/gh/Attumm/Maat)
 [![Downloads](https://static.pepy.tech/badge/maat/month)](https://pepy.tech/project/maat)
 
 
