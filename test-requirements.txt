@@ -1,5 +1,6 @@
 attrs==23.2.0
 cffi==1.16.0
+coverage==7.5.1
 cryptography==42.0.7
 deepdiff==7.0.1
 hypothesis==6.100.6
