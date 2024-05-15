@@ -11,43 +11,38 @@ on:
 permissions:
   contents: read
 
-env:
-  PYTHON_VERSIONS: '["3.0, 3.6, 3.7, 3.8", "3.9", "3.10", "3.11", "3.12"]'
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ${{fromJson(env.PYTHON_VERSIONS)}}
-
+        python-version: ["3.2", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Set MAX_PYTHON_VERSION env variable
-        run: |
-          echo "MAX_PYTHON_VERSION=$(echo '${{ env.PYTHON_VERSIONS }}' | jq -r '.[-1]')" >> $GITHUB_ENV
       - name: Install dependencies
         run: |
           pip install --upgrade pip setuptools
-          pip install -r requirements.txt
-
-      - name: Install test dependencies
-        run: |
           pip install -r test-requirements.txt
-
       - name: Run Pylama
         run: |
-          pylama * -i E501
+          pylama maat/* -i E501
+      # - name: Run MyPy strict
+      #   run: |
+      #     mypy --strict
       - name: Run Unit Tests
         run: |
           coverage run -m unittest discover
       - name: Upload coverage reports to Codecov
-        if: env.MAX_PYTHON_VERSION == matrix.python-version
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
