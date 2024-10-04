@@ -16,6 +16,7 @@ Maat key features:
 * Simplicity and Intuitiveness: Maat's validation schema is straightforward and easy to understand, promoting maintainability and ease of use.
 * Encryption and Decryption: Maat supports validation on encrypted data, helping to maintain data privacy and adhere to data protection regulations.
 * Deep Nesting: The library proficiently manages nested data structures, ensuring efficient validation for complex data requirements.
+* Zero Dependencies: Maat relies on no external packages for its core functionality. The packages listed in test-packages.txt are only used for testing purposes.
 * Performance: Pydantic's benchmarks indicate Maat as the top-performing library among popular validation libraries.
 
 Maat's combination of capabilities, including encryption and decryption, nesting, and exceptional performance, makes it a fitting choice for projects requiring a versatile data validation and transformation solution.
