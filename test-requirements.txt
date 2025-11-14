@@ -2,7 +2,7 @@ attrs==24.2.0
 cffi==1.17.1
 coverage==7.6.1
 cryptography==44.0.1
-deepdiff==8.6.1
+deepdiff
 hypothesis==6.112.2
 mccabe==0.7.0
 pycodestyle==2.12.1
