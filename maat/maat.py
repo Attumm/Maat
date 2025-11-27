@@ -28,9 +28,9 @@ def get_transformation_func(item, type_transformation):
     if transformation is None:
         return lambda x: x
     try:
-        return registered_transformation[transformation]
+        return transformation if callable(transformation) else registered_transformation[transformation]
     except KeyError:
-        raise Invalid(f"{transformation} is not registered as transformation")
+        raise Invalid(f"{transformation} is neither registered as transformation nor a callable object")
 
 
 def keys_equality(input_dict, counter_dict):

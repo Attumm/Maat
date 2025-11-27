@@ -714,6 +714,14 @@ class ValidatorWrongInputTests(unittest.TestCase):
         with self.assertRaisesRegex(Invalid, 'integer is not registered as type'):
             _ = scale(test_input, test_validation)
 
+    def test_pre_post_transformation_callable(self):
+        """Input dict has item with type float, transform to int, validate as int, tranform back to int"""
+        test_input = {"id": float(23)}
+        test_validation = {"id": {"type": "int", "transform": float, "pre_transform": int}}
+        validated_items = scale(test_input, test_validation)
+        difference = ddiff(validated_items, test_input)
+        self.assertEqual(difference, {})
+
     def test_pre_post_transformation(self):
         """Input dict has item with type float, transform to int, validate as int, tranform back to int"""
         test_input = {'id': float(23)}
@@ -726,14 +734,14 @@ class ValidatorWrongInputTests(unittest.TestCase):
         """Approriate message shown when trying to use pre transformation that is not registered"""
         test_input = {'id': float(23)}
         test_validation = {'id': {'type': 'int', 'pre_transform': 'integer'}}
-        with self.assertRaisesRegex(Invalid, 'integer is not registered as transformation'):
+        with self.assertRaisesRegex(Invalid, 'integer is neither registered as transformation nor a callable object'):
             _ = scale(test_input, test_validation)
 
     def test_not_set_post_transformation_function(self):
         """a helpfull message is shown when trying to use post transformation that is not registered"""
         test_input = {'id': 23}
         test_validation = {'id': {'type': 'float', 'transform': 'integer'}}
-        with self.assertRaisesRegex(Invalid, 'integer is not registered as transformation'):
+        with self.assertRaisesRegex(Invalid, 'integer is neither registered as transformation nor a callable object'):
             _ = scale(test_input, test_validation)
 
     def test_non_dictionary_function(self):

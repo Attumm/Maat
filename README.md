@@ -272,6 +272,24 @@ counter_dict = {
 validated_items = maat.scale(test_input, counter_dict)
 ```
 
+Transformation functions can also be callables:
+
+```python
+
+counter_dict = {
+    'name': {
+        'type': 'str', 'regex': 'John Doe', 'transform': encode
+    },
+    'age': {
+        'type': 'int', "cast": True, "transform": lambda x: min(x, 25)
+    },
+    'address': {
+        'type': 'str', 'regex': 'John Doe Street', 'transform': encode
+    },
+    
+}
+
+```
 
 #### Benefits
 
